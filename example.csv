@@ -1,0 +1,9 @@
+type,seed,pool_satoshi,winner_count,platform_fee_percentage,dust_threshold_satoshi,payout_fee_multiplier,fee_rate_sat_vb,tx_overhead_vbytes,input_p2wsh_bytes,output_default_vbytes
+header,00000000000000000001129035610fbdedff18de14bef5b474973d4b46db2dce,20000,1,1,10000,1,2,12,110,34
+type,address,balance_satoshi
+balance,bc1exampleaddress1,1280086
+balance,bc1exampleaddress2,500
+type,platform_fee_satoshi,estimated_miner_fee_satoshi,distributable_satoshi,fee_rate_sat_vb
+result_summary,200,380,19420,2
+type,address,balance_satoshi,original_reward_satoshi,final_reward_satoshi,is_dust
+result_winner,bc1exampleaddress1,1280086,19420,19420,false
