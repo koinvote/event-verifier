@@ -23,7 +23,7 @@ func NewLotteryService() *LotteryService {
 // Winner represents a selected address with weights.
 type Winner struct {
 	Address string
-	Balance int64
+	Score   int64
 }
 
 // LotteryContext is the input for lottery computation (provided by job or verifier).
@@ -35,10 +35,11 @@ type LotteryContext struct {
 	Params      LotteryParams
 }
 
-// BalanceEntry represents a participant balance for lottery selection.
+// BalanceEntry represents a participant's lottery weight.
 type BalanceEntry struct {
-	Address string
-	Balance int64
+	Address      string
+	Score        int64
+	ReferralCode *string
 }
 
 // LotteryParams holds the parameters needed for distribution calculation.
@@ -65,7 +66,7 @@ type LotteryResult struct {
 // WinnerResult holds round results per winner.
 type WinnerResult struct {
 	Address               string
-	Balance               int64
+	Score                 int64
 	OriginalRewardSatoshi int64
 	IsDust                bool
 	FinalRewardSatoshi    int64
@@ -121,7 +122,7 @@ func (s *LotteryService) computeWinners(seed string, participants []BalanceEntry
 	if winnerCount == len(participants) {
 		winners := make([]Winner, 0, len(participants))
 		for _, p := range participants {
-			winners = append(winners, Winner{Address: p.Address, Balance: p.Balance})
+			winners = append(winners, Winner{Address: p.Address, Score: p.Score})
 		}
 		return winners, nil
 	}
@@ -138,10 +139,10 @@ func (s *LotteryService) computeWinners(seed string, participants []BalanceEntry
 		// Recompute total weight for the remaining pool.
 		total := big.NewInt(0)
 		for _, e := range pool {
-			total.Add(total, big.NewInt(e.Balance))
+			total.Add(total, big.NewInt(e.Score))
 		}
 		if total.Sign() <= 0 {
-			return nil, fmt.Errorf("remaining total balance is zero")
+			return nil, fmt.Errorf("remaining total score is zero")
 		}
 
 		// Draw a random value in [0, total) and select by cumulative weights.
@@ -149,7 +150,7 @@ func (s *LotteryService) computeWinners(seed string, participants []BalanceEntry
 		acc := big.NewInt(0)
 		idx := -1
 		for i, e := range pool {
-			acc.Add(acc, big.NewInt(e.Balance))
+			acc.Add(acc, big.NewInt(e.Score))
 			if acc.Cmp(r) > 0 {
 				idx = i
 				break
@@ -160,7 +161,7 @@ func (s *LotteryService) computeWinners(seed string, participants []BalanceEntry
 		}
 
 		// Record the winner and remove them from the pool to avoid duplicates.
-		winners = append(winners, Winner{Address: pool[idx].Address, Balance: pool[idx].Balance})
+		winners = append(winners, Winner{Address: pool[idx].Address, Score: pool[idx].Score})
 		last := len(pool) - 1
 		pool[idx] = pool[last]
 		pool = pool[:last]
@@ -212,7 +213,7 @@ func (s *LotteryService) planDistribution(poolSat int64, winners []Winner, param
 		isDust := original < minDust
 		results = append(results, WinnerResult{
 			Address:               w.Address,
-			Balance:               w.Balance,
+			Score:                 w.Score,
 			OriginalRewardSatoshi: original,
 			IsDust:                isDust,
 		})
@@ -222,9 +223,9 @@ func (s *LotteryService) planDistribution(poolSat int64, winners []Winner, param
 	}
 
 	if len(kept) == 0 {
-		// 3) Fallback: if all dust, pick the largest balance as the sole payout target.
-		// Fallback: pick the largest balance as the only payout target.
-		sort.Slice(winners, func(i, j int) bool { return winners[i].Balance > winners[j].Balance })
+		// 3) Fallback: if all dust, pick the largest score as the sole payout target.
+		// Fallback: pick the largest score as the only payout target.
+		sort.Slice(winners, func(i, j int) bool { return winners[i].Score > winners[j].Score })
 		fee2 := estimateMinerFee(1+platformOutput, feeRate, params)
 		distributable2 := poolSat - platformFee - fee2
 		if distributable2 < 0 {
@@ -316,7 +317,7 @@ func splitProportional(total int64, winners []Winner) []int64 {
 	}
 	var sum int64
 	for _, w := range winners {
-		sum += w.Balance
+		sum += w.Score
 	}
 	if sum == 0 {
 		each := total / int64(len(winners))
@@ -327,7 +328,7 @@ func splitProportional(total int64, winners []Winner) []int64 {
 	}
 	var acc int64
 	for i, w := range winners {
-		out[i] = (total * w.Balance) / sum
+		out[i] = (total * w.Score) / sum
 		acc += out[i]
 	}
 	_ = total - acc
@@ -358,10 +359,10 @@ func applyResidual(rewards []int64, total int64) []int64 {
 func selectEligibleParticipants(balances []BalanceEntry) []BalanceEntry {
 	agg := make(map[string]int64)
 	for _, b := range balances {
-		if b.Address == "" || b.Balance <= 0 {
+		if b.Address == "" || b.Score <= 0 {
 			continue
 		}
-		agg[b.Address] += b.Balance
+		agg[b.Address] += b.Score
 	}
 
 	if len(agg) == 0 {
@@ -369,8 +370,8 @@ func selectEligibleParticipants(balances []BalanceEntry) []BalanceEntry {
 	}
 
 	out := make([]BalanceEntry, 0, len(agg))
-	for address, balance := range agg {
-		out = append(out, BalanceEntry{Address: address, Balance: balance})
+	for address, score := range agg {
+		out = append(out, BalanceEntry{Address: address, Score: score})
 	}
 	return out
 }
