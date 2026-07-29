@@ -16,6 +16,7 @@ import (
 
 type headerRow struct {
 	seed                  string
+	settlementBlockHeight int64 // absent in reports predating BTC-Time scoring
 	poolSatoshi           int64
 	winnerCount           int
 	platformFeePercentage float64
@@ -27,6 +28,46 @@ type headerRow struct {
 	outputDefaultVBytes   int
 }
 
+// columns maps a section's column names to their position, taken from the
+// "type,..." row that precedes each section in the report.
+//
+// Reading by name instead of by fixed offset is deliberate. Version 1.0.0 read
+// fixed offsets, so when the report gained a referral_code column every field
+// after it shifted by one and the tool reported a perfectly good payout as
+// unverifiable. Names let one build read both the old reports and the current
+// ones, and survive the next column that gets added.
+type columns map[string]int
+
+func newColumns(record []string) columns {
+	c := make(columns, len(record))
+	for i, name := range record {
+		c[strings.ToLower(strings.TrimSpace(name))] = i
+	}
+	return c
+}
+
+// lookup returns the first of the given column names present in the row.
+// Several names are accepted per field so that a column which has been renamed
+// is still found under its former name.
+func (c columns) lookup(record []string, names ...string) (string, bool) {
+	for _, name := range names {
+		if i, ok := c[name]; ok && i < len(record) {
+			return strings.TrimSpace(record[i]), true
+		}
+	}
+	return "", false
+}
+
+// require fails loudly when a column the verification actually needs is absent,
+// naming it so the reader can tell a stale tool from a malformed report.
+func (c columns) require(record []string, section string, names ...string) string {
+	value, ok := c.lookup(record, names...)
+	if !ok {
+		panic(fmt.Errorf("%s row has no %s column (tool may be older than the report)", section, names[0]))
+	}
+	return value
+}
+
 type resultSummary struct {
 	platformFeeSatoshi       int64
 	estimatedMinerFeeSatoshi int64
@@ -35,8 +76,13 @@ type resultSummary struct {
 }
 
 type resultWinner struct {
-	address               string
-	balanceSatoshi        int64
+	address string
+	// weight is the lottery weight the report claims for this address. Under
+	// BTC-Time scoring it is holding_score_sat_blocks; in reports predating it,
+	// balance_satoshi. The two are different units but play the same role, and
+	// the arithmetic below never mixes them: both sides of every comparison
+	// come from the same report.
+	weight                int64
 	originalRewardSatoshi int64
 	finalRewardSatoshi    int64
 	isDust                bool
@@ -51,7 +97,7 @@ type parsedCSV struct {
 	hasResult bool
 }
 
-const toolVersion = "1.0.0"
+const toolVersion = "2.0.0"
 
 func main() {
 	reportPath := flag.String("report", "", "path to payout verification CSV")
@@ -144,6 +190,7 @@ func loadReport(path string) (*parsedCSV, error) {
 	reader.FieldsPerRecord = -1
 
 	parsed := &parsedCSV{}
+	var cols columns
 	for {
 		record, err := reader.Read()
 		if errors.Is(err, io.EOF) {
@@ -155,53 +202,51 @@ func loadReport(path string) (*parsedCSV, error) {
 		if len(record) == 0 {
 			continue
 		}
+		// Each section is preceded by its own column-name row. Remember it and
+		// read the rows that follow by name.
 		if strings.ToLower(strings.TrimSpace(record[0])) == "type" {
+			cols = newColumns(record)
 			continue
+		}
+		if cols == nil {
+			return nil, fmt.Errorf("data row appears before any column-name row")
 		}
 
 		switch strings.ToLower(strings.TrimSpace(record[0])) {
 		case "header":
-			if len(record) < 11 {
-				return nil, fmt.Errorf("invalid header row length: %d", len(record))
+			parsed.header.seed = cols.require(record, "header", "seed")
+			// Present only under BTC-Time scoring; older reports simply omit it.
+			if raw, ok := cols.lookup(record, "settlement_block_height"); ok && raw != "" {
+				parsed.header.settlementBlockHeight = mustInt64(raw, "settlement_block_height")
 			}
-			parsed.header.seed = strings.TrimSpace(record[1])
-			parsed.header.poolSatoshi = mustInt64(record[2], "pool_satoshi")
-			parsed.header.winnerCount = mustInt(record[3], "winner_count")
-			parsed.header.platformFeePercentage = mustFloat(record[4], "platform_fee_percentage")
-			parsed.header.dustThresholdSatoshi = mustInt64(record[5], "dust_threshold_satoshi")
-			parsed.header.payoutFeeMultiplier = mustFloat(record[6], "payout_fee_multiplier")
-			parsed.header.feeRateSatVb = mustInt64(record[7], "fee_rate_sat_vb")
-			parsed.header.txOverheadVBytes = mustInt(record[8], "tx_overhead_vbytes")
-			parsed.header.inputP2WSHBytes = mustInt(record[9], "input_p2wsh_bytes")
-			parsed.header.outputDefaultVBytes = mustInt(record[10], "output_default_vbytes")
+			parsed.header.poolSatoshi = mustInt64(cols.require(record, "header", "pool_satoshi"), "pool_satoshi")
+			parsed.header.winnerCount = mustInt(cols.require(record, "header", "winner_count"), "winner_count")
+			parsed.header.platformFeePercentage = mustFloat(cols.require(record, "header", "platform_fee_percentage"), "platform_fee_percentage")
+			parsed.header.dustThresholdSatoshi = mustInt64(cols.require(record, "header", "dust_threshold_satoshi"), "dust_threshold_satoshi")
+			parsed.header.payoutFeeMultiplier = mustFloat(cols.require(record, "header", "payout_fee_multiplier"), "payout_fee_multiplier")
+			parsed.header.feeRateSatVb = mustInt64(cols.require(record, "header", "fee_rate_sat_vb"), "fee_rate_sat_vb")
+			parsed.header.txOverheadVBytes = mustInt(cols.require(record, "header", "tx_overhead_vbytes"), "tx_overhead_vbytes")
+			parsed.header.inputP2WSHBytes = mustInt(cols.require(record, "header", "input_p2wsh_bytes"), "input_p2wsh_bytes")
+			parsed.header.outputDefaultVBytes = mustInt(cols.require(record, "header", "output_default_vbytes"), "output_default_vbytes")
 			parsed.hasHeader = true
 		case "balance":
-			if len(record) < 3 {
-				return nil, fmt.Errorf("invalid balance row length: %d", len(record))
-			}
 			parsed.balances = append(parsed.balances, service.BalanceEntry{
-				Address: strings.TrimSpace(record[1]),
-				Balance: mustInt64(record[2], "balance_satoshi"),
+				Address: cols.require(record, "balance", "address"),
+				Score:   mustInt64(cols.require(record, "balance", "holding_score_sat_blocks", "balance_satoshi"), "holding_score_sat_blocks"),
 			})
 		case "result_summary":
-			if len(record) < 5 {
-				return nil, fmt.Errorf("invalid result_summary row length: %d", len(record))
-			}
-			parsed.summary.platformFeeSatoshi = mustInt64(record[1], "platform_fee_satoshi")
-			parsed.summary.estimatedMinerFeeSatoshi = mustInt64(record[2], "estimated_miner_fee_satoshi")
-			parsed.summary.distributableSatoshi = mustInt64(record[3], "distributable_satoshi")
-			parsed.summary.feeRateSatVb = mustInt64(record[4], "fee_rate_sat_vb")
+			parsed.summary.platformFeeSatoshi = mustInt64(cols.require(record, "result_summary", "platform_fee_satoshi"), "platform_fee_satoshi")
+			parsed.summary.estimatedMinerFeeSatoshi = mustInt64(cols.require(record, "result_summary", "estimated_miner_fee_satoshi"), "estimated_miner_fee_satoshi")
+			parsed.summary.distributableSatoshi = mustInt64(cols.require(record, "result_summary", "distributable_satoshi"), "distributable_satoshi")
+			parsed.summary.feeRateSatVb = mustInt64(cols.require(record, "result_summary", "fee_rate_sat_vb"), "fee_rate_sat_vb")
 			parsed.hasResult = true
 		case "result_winner":
-			if len(record) < 6 {
-				return nil, fmt.Errorf("invalid result_winner row length: %d", len(record))
-			}
 			parsed.winners = append(parsed.winners, resultWinner{
-				address:               strings.TrimSpace(record[1]),
-				balanceSatoshi:        mustInt64(record[2], "balance_satoshi"),
-				originalRewardSatoshi: mustInt64(record[3], "original_reward_satoshi"),
-				finalRewardSatoshi:    mustInt64(record[4], "final_reward_satoshi"),
-				isDust:                mustBool(record[5], "is_dust"),
+				address:               cols.require(record, "result_winner", "address"),
+				weight:                mustInt64(cols.require(record, "result_winner", "holding_score_sat_blocks", "balance_satoshi"), "holding_score_sat_blocks"),
+				originalRewardSatoshi: mustInt64(cols.require(record, "result_winner", "original_reward_satoshi"), "original_reward_satoshi"),
+				finalRewardSatoshi:    mustInt64(cols.require(record, "result_winner", "final_reward_satoshi"), "final_reward_satoshi"),
+				isDust:                mustBool(cols.require(record, "result_winner", "is_dust"), "is_dust"),
 			})
 		}
 	}
@@ -251,8 +296,8 @@ func compareResults(parsed *parsedCSV, result *service.LotteryResult) []string {
 			continue
 		}
 
-		if winner.balanceSatoshi != computedWinner.Balance {
-			issues = append(issues, fmt.Sprintf("balance mismatch for %s: report=%d computed=%d", winner.address, winner.balanceSatoshi, computedWinner.Balance))
+		if winner.weight != computedWinner.Score {
+			issues = append(issues, fmt.Sprintf("lottery weight mismatch for %s: report=%d computed=%d", winner.address, winner.weight, computedWinner.Score))
 		}
 		if winner.originalRewardSatoshi != computedWinner.OriginalRewardSatoshi {
 			issues = append(issues, fmt.Sprintf("original_reward_satoshi mismatch for %s: report=%d computed=%d", winner.address, winner.originalRewardSatoshi, computedWinner.OriginalRewardSatoshi))

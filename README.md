@@ -1,8 +1,30 @@
 # Event Verifier
 
-Version: 1.0.0
+Version: 2.0.0
 
 This tool verifies that a payout report CSV matches the official lottery calculation.
+It recomputes the draw from the report's own inputs and compares every winner,
+reward and fee against what the report claims.
+
+## Which reports this version reads
+
+Version 2.0.0 reads **both** the current reports and every earlier one:
+
+- **BTC-Time scoring** — the lottery weight is `holding_score_sat_blocks`, a
+  satoshi x blocks figure that credits how much was held *and for how long*.
+  These reports also carry `settlement_block_height`, and per address an
+  `average_holding_satoshi` and `join_block_height`.
+- **Older reports**, where the weight was `balance_satoshi`: a point-in-time
+  balance snapshot. `example-legacy.csv` is one of these, and still verifies.
+
+Columns are matched by **name**, taken from the `type,...` row that precedes
+each section, so a report that gains a column stays verifiable.
+
+> **If you are upgrading from 1.0.0, please re-run any report that failed.**
+> 1.0.0 read columns by fixed position. When the report gained a
+> `referral_code` column, every field after it shifted by one, and 1.0.0
+> reported correct payouts as unverifiable. That was a defect in this tool,
+> not evidence of anything wrong with the payouts it rejected.
 
 ## Usage
 
@@ -43,7 +65,32 @@ macOS / Linux:
 - Failure:
   - `Verification failed. Possible causes: report file is incorrect or incomplete; tool version mismatch; input parameters are incorrect.`
 
-For detailed differences, add `--verbose`:
+Exit status is `0` when verification passes and `1` when it does not, so the
+tool can be used in a script.
+
+**Always add `--verbose` before drawing any conclusion from a failure.** The
+summary above cannot tell the three causes apart; the detail can. In
+particular, a line like
+
+```
+result_winner row has no original_reward_satoshi column (tool may be older than the report)
+```
+
+means this tool is out of date, not that the payout is wrong. Pull the latest
+version and run it again.
+
 ```
 verify-event.exe --report <your-report-file.csv> --verbose
 ```
+
+## Checking it against a report you trust
+
+Two sample reports are included, and both should pass:
+
+```
+./verify-event --report example.csv          # current, BTC-Time scoring
+./verify-event --report example-legacy.csv   # pre-BTC-Time balance snapshot
+```
+
+If either fails, the build is wrong — stop and report it, rather than
+concluding anything about your own report.
