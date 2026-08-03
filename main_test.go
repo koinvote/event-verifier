@@ -7,12 +7,16 @@ import (
 	"github.com/koinvote/event-verifier/service"
 )
 
-// The bundled reports must both verify: one in the current BTC-Time format,
-// one predating it. Version 1.0.0 broke on a report whose columns had shifted
-// and nobody noticed for months, so the compatibility promise is worth
-// asserting rather than assuming.
+// Every bundled report must verify, across all three formats this tool has
+// been asked to read: the current one, the one before the fee model changed,
+// and the one predating BTC-Time scoring. Version 1.0.0 broke on a report
+// whose columns had shifted and nobody noticed for months, so the
+// compatibility promise is worth asserting rather than assuming.
+//
+// The older two are the point of this test. A payout is a public record, and a
+// tool that can only check the most recent one is not much of a check.
 func TestBundledReportsVerify(t *testing.T) {
-	for _, path := range []string{"example.csv", "example-legacy.csv"} {
+	for _, path := range []string{"example-v2.csv", "example.csv", "example-legacy.csv"} {
 		t.Run(path, func(t *testing.T) {
 			parsed, err := loadReport(path)
 			if err != nil {
@@ -29,6 +33,8 @@ func TestBundledReportsVerify(t *testing.T) {
 					DustThresholdSatoshi:  parsed.header.dustThresholdSatoshi,
 					PayoutFeeMultiplier:   parsed.header.payoutFeeMultiplier,
 					FeeRateSatVb:          parsed.header.feeRateSatVb,
+					FeeRateDecimal:        parsed.header.feeRateDecimal,
+					MinFeeRateSatVb:       parsed.header.minFeeRateSatVb,
 					TxOverheadVBytes:      parsed.header.txOverheadVBytes,
 					InputP2WSHBytes:       parsed.header.inputP2WSHBytes,
 					OutputDefaultVBytes:   parsed.header.outputDefaultVBytes,
@@ -83,4 +89,66 @@ func TestMissingColumnNamesItself(t *testing.T) {
 
 	cols := newColumns([]string{"type", "address"})
 	cols.require([]string{"result_winner", "bc1qexample"}, "result_winner", "original_reward_satoshi")
+}
+
+// A schema 2 report states its fee rate instead of letting it be derived, so
+// what remains checkable is whether the payout obeyed the policy it published.
+// These are the ways it could claim compliance it does not have.
+func TestVersion2FeePolicyIsAudited(t *testing.T) {
+	base := func() *parsedCSV {
+		parsed, err := loadReport("example-v2.csv")
+		if err != nil {
+			t.Fatalf("load: %v", err)
+		}
+		return parsed
+	}
+
+	t.Run("the bundled report is clean", func(t *testing.T) {
+		if issues := checkFeePolicy(base()); len(issues) != 0 {
+			t.Errorf("unexpected issues: %v", issues)
+		}
+	})
+
+	t.Run("the two sections must agree on the rate", func(t *testing.T) {
+		p := base()
+		p.summary.feeRateSatVb = p.header.feeRateDecimal + 1
+		if issues := checkFeePolicy(p); len(issues) == 0 {
+			t.Error("accepted a report whose two fee rates disagree")
+		}
+	})
+
+	t.Run("a rate under the declared floor is caught", func(t *testing.T) {
+		p := base()
+		p.header.feeRateDecimal = 0.292
+		p.summary.feeRateSatVb = 0.292
+		if issues := checkFeePolicy(p); len(issues) == 0 {
+			t.Error("accepted a rate below the floor the report itself declares")
+		}
+	})
+
+	t.Run("claiming the floor without being at it is caught", func(t *testing.T) {
+		p := base()
+		p.header.feeRateSource = "floor"
+		if issues := checkFeePolicy(p); len(issues) == 0 {
+			t.Error("accepted a report claiming the floor applied when it did not")
+		}
+	})
+
+	t.Run("a fee over the declared cap is caught", func(t *testing.T) {
+		p := base()
+		p.summary.estimatedMinerFeeSatoshi = p.header.poolSatoshi // 100% of the pool
+		if issues := checkFeePolicy(p); len(issues) == 0 {
+			t.Error("accepted a miner fee far over the cap the report declares")
+		}
+	})
+
+	t.Run("version 1 reports are not held to version 2 rules", func(t *testing.T) {
+		parsed, err := loadReport("example.csv")
+		if err != nil {
+			t.Fatalf("load: %v", err)
+		}
+		if issues := checkFeePolicy(parsed); len(issues) != 0 {
+			t.Errorf("a version 1 report was audited against version 2 policy: %v", issues)
+		}
+	})
 }

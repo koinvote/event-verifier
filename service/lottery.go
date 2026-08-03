@@ -48,7 +48,24 @@ type LotteryParams struct {
 	DustThresholdSatoshi  int64
 	PayoutFeeMultiplier   float64
 
-	FeeRateSatVb        int64
+	// FeeRateSatVb is the version 1 rate: an integer, multiplied by
+	// PayoutFeeMultiplier to get the rate the transaction offered.
+	FeeRateSatVb int64
+
+	// FeeRateDecimal is the version 2 rate, taken straight from the report.
+	//
+	// From schema version 2 the fee comes from the node's own estimator at the
+	// moment of planning. That number cannot be recomputed afterwards - the
+	// mempool it described is gone - so the report states it and this tool
+	// checks that everything downstream follows from it, rather than deriving
+	// it from a constant and a multiplier the way version 1 could.
+	//
+	// Zero means a version 1 report, and the integer path above is used.
+	FeeRateDecimal float64
+	// MinFeeRateSatVb is the floor the report declares. Checked, not applied:
+	// if the stated rate is under it, the report contradicts its own policy.
+	MinFeeRateSatVb float64
+
 	TxOverheadVBytes    int
 	InputP2WSHBytes     int
 	OutputDefaultVBytes int
@@ -59,7 +76,7 @@ type LotteryResult struct {
 	PlatformFeeSatoshi       int64
 	EstimatedMinerFeeSatoshi int64
 	DistributableSatoshi     int64
-	FeeRateSatVb             int64
+	FeeRateSatVb             float64
 	Winners                  []WinnerResult
 }
 
@@ -280,16 +297,27 @@ func (s *LotteryService) planDistribution(poolSat int64, winners []Winner, param
 	}, nil
 }
 
-func effectiveFeeRate(params LotteryParams) int64 {
-	feeRate := params.FeeRateSatVb
+// effectiveFeeRate returns the rate the transaction offered, in sat/vB.
+//
+// Version 2 reports state it outright; version 1 reports state the two numbers
+// it was derived from. Both are returned as a decimal so the rest of the
+// arithmetic is shared - for a version 1 report the value is a whole number
+// either way, so nothing about how those files verify changes.
+func effectiveFeeRate(params LotteryParams) float64 {
+	if params.FeeRateDecimal > 0 {
+		return params.FeeRateDecimal
+	}
 	multiplier := params.PayoutFeeMultiplier
 	if multiplier <= 0 {
 		multiplier = 1.0
 	}
-	return int64(float64(feeRate) * multiplier)
+	return float64(int64(float64(params.FeeRateSatVb) * multiplier))
 }
 
-func estimateMinerFee(outputs int, feeRate int64, params LotteryParams) int64 {
+// estimateMinerFee rounds up, which for a version 1 report is a no-op: those
+// rates are whole numbers, so rate x vbytes is already an integer and the old
+// files verify to exactly the same figures as before.
+func estimateMinerFee(outputs int, feeRate float64, params LotteryParams) int64 {
 	if outputs <= 0 {
 		return 0
 	}
@@ -307,7 +335,7 @@ func estimateMinerFee(outputs int, feeRate int64, params LotteryParams) int64 {
 	}
 
 	vbytes := overhead + inP2WSH + outDefault*outputs
-	return feeRate * int64(vbytes)
+	return int64(math.Ceil(feeRate * float64(vbytes)))
 }
 
 func splitProportional(total int64, winners []Winner) []int64 {
@@ -315,23 +343,39 @@ func splitProportional(total int64, winners []Winner) []int64 {
 	if total <= 0 || len(winners) == 0 {
 		return out
 	}
-	var sum int64
+	// big.Int because the multiplication below overflows int64 at ordinary
+	// sizes. A BTC-Time score is satoshi x blocks held, so a 2 BTC holder in a
+	// week-long event carries 2e11; multiplied by a 1 BTC pool's distributable
+	// that is 1.8e19, past the int64 ceiling of 9.2e18.
+	//
+	// The failure was silent and picked the wrong winner: the product wrapped
+	// negative, the largest holder's share came out below the dust threshold,
+	// and they were dropped from the payout while a small holder took the lot.
+	// computeWinners above has always used big.Int for the same reason; this
+	// was the one place left doing the arithmetic in int64.
+	sum := new(big.Int)
 	for _, w := range winners {
-		sum += w.Score
+		sum.Add(sum, big.NewInt(w.Score))
 	}
-	if sum == 0 {
+	if sum.Sign() == 0 {
 		each := total / int64(len(winners))
 		for i := range out {
 			out[i] = each
 		}
 		return out
 	}
-	var acc int64
+	// Each share is rounded down, so the shares sum to slightly less than total
+	// — by under one satoshi per winner. Round two hands that remainder to the
+	// largest share via applyResidual, so final amounts are exact; round one's
+	// figures are only used to decide who is dust, where being a satoshi light
+	// can only matter to a winner sitting exactly on the threshold.
+	bigTotal := big.NewInt(total)
 	for i, w := range winners {
-		out[i] = (total * w.Score) / sum
-		acc += out[i]
+		// share = total * score / sum, and score <= sum, so the result is at
+		// most total and always fits back into int64.
+		share := new(big.Int).Mul(bigTotal, big.NewInt(w.Score))
+		out[i] = share.Div(share, sum).Int64()
 	}
-	_ = total - acc
 	return out
 }
 

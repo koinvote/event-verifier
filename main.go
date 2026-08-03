@@ -14,7 +14,28 @@ import (
 	"github.com/koinvote/event-verifier/service"
 )
 
+// maxSupportedSchemaVersion is the newest report format this build knows how
+// to check.
+//
+// A newer file is refused rather than read with the rules of an older one. The
+// version exists because the rules changed - version 2 stopped deriving the fee
+// rate and started auditing declared policy instead - so applying version 2's
+// rules to a version 3 file would produce a "passed" that means nothing. A tool
+// that cannot tell the difference between "checked and correct" and "did not
+// understand the file" is worse than no tool.
+const maxSupportedSchemaVersion = 2
+
 type headerRow struct {
+	// schemaVersion is absent in every report written before the fee model
+	// changed; those are version 1 and are read exactly as they always were.
+	schemaVersion         int
+	eventID               string
+	payoutTxID            string
+	feeRateDecimal        float64
+	feeRateSource         string
+	feeTargetBlocks       int
+	minFeeRateSatVb       float64
+	maxFeePercentage      float64
 	seed                  string
 	settlementBlockHeight int64 // absent in reports predating BTC-Time scoring
 	poolSatoshi           int64
@@ -72,7 +93,7 @@ type resultSummary struct {
 	platformFeeSatoshi       int64
 	estimatedMinerFeeSatoshi int64
 	distributableSatoshi     int64
-	feeRateSatVb             int64
+	feeRateSatVb             float64
 }
 
 type resultWinner struct {
@@ -147,6 +168,8 @@ func main() {
 			DustThresholdSatoshi:  parsed.header.dustThresholdSatoshi,
 			PayoutFeeMultiplier:   parsed.header.payoutFeeMultiplier,
 			FeeRateSatVb:          parsed.header.feeRateSatVb,
+			FeeRateDecimal:        parsed.header.feeRateDecimal,
+			MinFeeRateSatVb:       parsed.header.minFeeRateSatVb,
 			TxOverheadVBytes:      parsed.header.txOverheadVBytes,
 			InputP2WSHBytes:       parsed.header.inputP2WSHBytes,
 			OutputDefaultVBytes:   parsed.header.outputDefaultVBytes,
@@ -179,7 +202,23 @@ func main() {
 	os.Exit(1)
 }
 
-func loadReport(path string) (*parsedCSV, error) {
+func loadReport(path string) (parsed *parsedCSV, err error) {
+	// The helpers below signal a malformed field by panicking, which keeps the
+	// parsing code readable but would otherwise surface as a Go stack trace in
+	// front of someone checking their own payout. A truncated download or the
+	// wrong file picked out of a folder is an ordinary mistake, and it has to
+	// read as "this file could not be understood", not as the tool falling over.
+	defer func() {
+		if r := recover(); r != nil {
+			parsed = nil
+			if e, ok := r.(error); ok {
+				err = fmt.Errorf("malformed report: %w", e)
+				return
+			}
+			err = fmt.Errorf("malformed report: %v", r)
+		}
+	}()
+
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open report: %w", err)
@@ -189,7 +228,7 @@ func loadReport(path string) (*parsedCSV, error) {
 	reader := csv.NewReader(file)
 	reader.FieldsPerRecord = -1
 
-	parsed := &parsedCSV{}
+	parsed = &parsedCSV{}
 	var cols columns
 	for {
 		record, err := reader.Read()
@@ -223,8 +262,33 @@ func loadReport(path string) (*parsedCSV, error) {
 			parsed.header.winnerCount = mustInt(cols.require(record, "header", "winner_count"), "winner_count")
 			parsed.header.platformFeePercentage = mustFloat(cols.require(record, "header", "platform_fee_percentage"), "platform_fee_percentage")
 			parsed.header.dustThresholdSatoshi = mustInt64(cols.require(record, "header", "dust_threshold_satoshi"), "dust_threshold_satoshi")
-			parsed.header.payoutFeeMultiplier = mustFloat(cols.require(record, "header", "payout_fee_multiplier"), "payout_fee_multiplier")
-			parsed.header.feeRateSatVb = mustInt64(cols.require(record, "header", "fee_rate_sat_vb"), "fee_rate_sat_vb")
+			// From schema 2 the header states the rate outright and drops the
+			// multiplier it used to be derived from. Both shapes are read here
+			// so one build verifies old and new reports alike.
+			if raw, ok := cols.lookup(record, "schema_version"); ok && raw != "" {
+				parsed.header.schemaVersion = mustInt(raw, "schema_version")
+			} else {
+				parsed.header.schemaVersion = 1
+			}
+			parsed.header.eventID, _ = cols.lookup(record, "event_id")
+			parsed.header.payoutTxID, _ = cols.lookup(record, "payout_txid")
+
+			if parsed.header.schemaVersion >= 2 {
+				parsed.header.feeRateDecimal = mustFloat(cols.require(record, "header", "fee_rate_sat_vb"), "fee_rate_sat_vb")
+				parsed.header.feeRateSource, _ = cols.lookup(record, "fee_rate_source")
+				if raw, ok := cols.lookup(record, "fee_target_blocks"); ok && raw != "" {
+					parsed.header.feeTargetBlocks = mustInt(raw, "fee_target_blocks")
+				}
+				if raw, ok := cols.lookup(record, "min_fee_rate_sat_vb"); ok && raw != "" {
+					parsed.header.minFeeRateSatVb = mustFloat(raw, "min_fee_rate_sat_vb")
+				}
+				if raw, ok := cols.lookup(record, "max_fee_percentage"); ok && raw != "" {
+					parsed.header.maxFeePercentage = mustFloat(raw, "max_fee_percentage")
+				}
+			} else {
+				parsed.header.payoutFeeMultiplier = mustFloat(cols.require(record, "header", "payout_fee_multiplier"), "payout_fee_multiplier")
+				parsed.header.feeRateSatVb = mustInt64(cols.require(record, "header", "fee_rate_sat_vb"), "fee_rate_sat_vb")
+			}
 			parsed.header.txOverheadVBytes = mustInt(cols.require(record, "header", "tx_overhead_vbytes"), "tx_overhead_vbytes")
 			parsed.header.inputP2WSHBytes = mustInt(cols.require(record, "header", "input_p2wsh_bytes"), "input_p2wsh_bytes")
 			parsed.header.outputDefaultVBytes = mustInt(cols.require(record, "header", "output_default_vbytes"), "output_default_vbytes")
@@ -238,7 +302,7 @@ func loadReport(path string) (*parsedCSV, error) {
 			parsed.summary.platformFeeSatoshi = mustInt64(cols.require(record, "result_summary", "platform_fee_satoshi"), "platform_fee_satoshi")
 			parsed.summary.estimatedMinerFeeSatoshi = mustInt64(cols.require(record, "result_summary", "estimated_miner_fee_satoshi"), "estimated_miner_fee_satoshi")
 			parsed.summary.distributableSatoshi = mustInt64(cols.require(record, "result_summary", "distributable_satoshi"), "distributable_satoshi")
-			parsed.summary.feeRateSatVb = mustInt64(cols.require(record, "result_summary", "fee_rate_sat_vb"), "fee_rate_sat_vb")
+			parsed.summary.feeRateSatVb = mustFloat(cols.require(record, "result_summary", "fee_rate_sat_vb"), "fee_rate_sat_vb")
 			parsed.hasResult = true
 		case "result_winner":
 			parsed.winners = append(parsed.winners, resultWinner{
@@ -254,6 +318,12 @@ func loadReport(path string) (*parsedCSV, error) {
 	if !parsed.hasHeader {
 		return nil, fmt.Errorf("missing header row")
 	}
+	if parsed.header.schemaVersion > maxSupportedSchemaVersion {
+		return nil, fmt.Errorf(
+			"report uses schema version %d but this build only understands up to %d; "+
+				"download the current verifier from https://github.com/koinvote/event-verifier",
+			parsed.header.schemaVersion, maxSupportedSchemaVersion)
+	}
 	if !parsed.hasResult {
 		return nil, fmt.Errorf("missing result_summary row")
 	}
@@ -262,6 +332,66 @@ func loadReport(path string) (*parsedCSV, error) {
 	}
 
 	return parsed, nil
+}
+
+// checkFeePolicy audits what a version 2 report can still be held to.
+//
+// Version 1 priced the fee from a constant and a multiplier, both stated in the
+// report, so this tool could recompute the rate and prove it. Version 2 takes
+// the rate from the node's fee estimator at the moment of planning, and no one
+// can reproduce that later - the mempool it described no longer exists.
+//
+// What can still be proven is that the payout obeyed the rules it published:
+// the rate is at or above the floor it declares, it is the same figure in both
+// sections, and the fee it charged is no more of the pool than it said it would
+// take. That is a weaker claim than version 1's arithmetic check, and it is the
+// honest one - the alternative was to keep pretending a hardcoded constant was
+// a market rate.
+func checkFeePolicy(parsed *parsedCSV) []string {
+	if parsed.header.schemaVersion < 2 {
+		return nil
+	}
+
+	issues := make([]string, 0)
+
+	if parsed.header.feeRateDecimal != parsed.summary.feeRateSatVb {
+		issues = append(issues, fmt.Sprintf(
+			"fee rate disagrees between sections: header=%v result_summary=%v",
+			parsed.header.feeRateDecimal, parsed.summary.feeRateSatVb))
+	}
+
+	if parsed.header.minFeeRateSatVb > 0 && parsed.header.feeRateDecimal < parsed.header.minFeeRateSatVb {
+		issues = append(issues, fmt.Sprintf(
+			"fee rate %v is below the floor the report declares (%v)",
+			parsed.header.feeRateDecimal, parsed.header.minFeeRateSatVb))
+	}
+
+	// A rate that was clamped must say so, and one that was not must not
+	// claim it was.
+	switch parsed.header.feeRateSource {
+	case "floor":
+		if parsed.header.minFeeRateSatVb > 0 && parsed.header.feeRateDecimal != parsed.header.minFeeRateSatVb {
+			issues = append(issues, fmt.Sprintf(
+				"fee_rate_source says floor but the rate is %v, not the floor %v",
+				parsed.header.feeRateDecimal, parsed.header.minFeeRateSatVb))
+		}
+	case "node_estimate", "":
+	default:
+		issues = append(issues, fmt.Sprintf("unknown fee_rate_source %q", parsed.header.feeRateSource))
+	}
+
+	if parsed.header.maxFeePercentage > 0 && parsed.header.poolSatoshi > 0 {
+		cap := float64(parsed.header.poolSatoshi) * parsed.header.maxFeePercentage / 100
+		if float64(parsed.summary.estimatedMinerFeeSatoshi) > cap {
+			issues = append(issues, fmt.Sprintf(
+				"miner fee %d sats is %.2f%% of the pool, over the %.2f%% cap the report declares",
+				parsed.summary.estimatedMinerFeeSatoshi,
+				float64(parsed.summary.estimatedMinerFeeSatoshi)/float64(parsed.header.poolSatoshi)*100,
+				parsed.header.maxFeePercentage))
+		}
+	}
+
+	return issues
 }
 
 func compareResults(parsed *parsedCSV, result *service.LotteryResult) []string {
@@ -277,8 +407,10 @@ func compareResults(parsed *parsedCSV, result *service.LotteryResult) []string {
 		issues = append(issues, fmt.Sprintf("distributable_satoshi mismatch: report=%d computed=%d", parsed.summary.distributableSatoshi, result.DistributableSatoshi))
 	}
 	if parsed.summary.feeRateSatVb != result.FeeRateSatVb {
-		issues = append(issues, fmt.Sprintf("fee_rate_sat_vb mismatch: report=%d computed=%d", parsed.summary.feeRateSatVb, result.FeeRateSatVb))
+		issues = append(issues, fmt.Sprintf("fee_rate_sat_vb mismatch: report=%v computed=%v", parsed.summary.feeRateSatVb, result.FeeRateSatVb))
 	}
+
+	issues = append(issues, checkFeePolicy(parsed)...)
 
 	computed := make(map[string]service.WinnerResult, len(result.Winners))
 	for _, winner := range result.Winners {
