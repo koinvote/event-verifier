@@ -1,0 +1,15 @@
+type,schema_version,event_id,payout_txid,seed,settlement_block_height,pool_satoshi,winner_count,platform_fee_percentage,dust_threshold_satoshi,fee_rate_sat_vb,fee_rate_source,fee_target_blocks,min_fee_rate_sat_vb,max_fee_percentage,tx_overhead_vbytes,input_p2wsh_bytes,output_default_vbytes
+header,2,01KBFB9M9XYD0M6STK1T4ZPWSS,a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0,0000000000000000000123abcdeadbeef,900100,100000000,4,10,600,1.191,node_estimate,6,1,5,10,109,31
+type,address,referral_code,holding_score_sat_blocks,average_holding_satoshi,join_block_height
+balance,bc1qaaa,,302400000000,2994059405,900000
+balance,bc1qbbb,,100800000000,1107692307,900010
+balance,bc1qccc,,75600000000,933333333,900020
+balance,bc1qddd,,30240000000,425915492,900030
+balance,bc1qeee,,100000,1639,900040
+type,platform_fee_satoshi,estimated_miner_fee_satoshi,distributable_satoshi,fee_rate_sat_vb
+result_summary,10000000,327,89999673,1.191
+type,address,holding_score_sat_blocks,average_holding_satoshi,join_block_height,original_reward_satoshi,final_reward_satoshi,is_dust
+result_winner,bc1qbbb,100800000000,1107692307,900010,17821717,17821717,false
+result_winner,bc1qaaa,302400000000,2994059405,900000,53465152,53465153,false
+result_winner,bc1qccc,75600000000,933333333,900020,13366288,13366288,false
+result_winner,bc1qddd,30240000000,425915492,900030,5346515,5346515,false
