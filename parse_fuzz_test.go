@@ -17,7 +17,7 @@ import (
 // never happen is that a report claims to have been checked when the parse went
 // sideways.
 func FuzzLoadReportSurvivesAnyFile(f *testing.F) {
-	for _, path := range []string{"example-v2.csv", "example.csv", "example-legacy.csv"} {
+	for _, path := range []string{"example-v3.csv", "example-v2.csv", "example.csv", "example-legacy.csv"} {
 		content, err := os.ReadFile(path)
 		if err != nil {
 			f.Fatalf("read seed %s: %v", path, err)

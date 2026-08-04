@@ -19,25 +19,38 @@ import (
 //
 // A newer file is refused rather than read with the rules of an older one. The
 // version exists because the rules changed - version 2 stopped deriving the fee
-// rate and started auditing declared policy instead - so applying version 2's
-// rules to a version 3 file would produce a "passed" that means nothing. A tool
-// that cannot tell the difference between "checked and correct" and "did not
-// understand the file" is worse than no tool.
-const maxSupportedSchemaVersion = 2
+// rate and started auditing declared policy instead, version 3 split the
+// settlement block into two - so reading a newer file with an older version's
+// rules would produce a "passed" that means nothing. A tool that cannot tell
+// the difference between "checked and correct" and "did not understand the
+// file" is worse than no tool.
+const maxSupportedSchemaVersion = 3
 
 type headerRow struct {
 	// schemaVersion is absent in every report written before the fee model
 	// changed; those are version 1 and are read exactly as they always were.
-	schemaVersion         int
-	eventID               string
-	payoutTxID            string
-	feeRateDecimal        float64
-	feeRateSource         string
-	feeTargetBlocks       int
-	minFeeRateSatVb       float64
-	maxFeePercentage      float64
-	seed                  string
-	settlementBlockHeight int64 // absent in reports predating BTC-Time scoring
+	schemaVersion    int
+	eventID          string
+	payoutTxID       string
+	feeRateDecimal   float64
+	feeRateSource    string
+	feeTargetBlocks  int
+	minFeeRateSatVb  float64
+	maxFeePercentage float64
+	seed             string
+
+	// settlementBlockHeight is the version 1 and 2 shape: one block that both
+	// ended the scoring window and supplied the seed. Absent in reports
+	// predating BTC-Time scoring, and absent from version 3 onwards.
+	settlementBlockHeight int64
+
+	// From version 3 the two are separate blocks. scoreBlockHeight ends the
+	// scoring window; seedBlockHeight is where the seed above came from, six
+	// blocks later, so that whoever mined it could not see the balances being
+	// weighted.
+	scoreBlockHeight      int64
+	scoreBlockHash        string
+	seedBlockHeight       int64
 	poolSatoshi           int64
 	winnerCount           int
 	platformFeePercentage float64
@@ -158,23 +171,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	ctx := service.LotteryContext{
-		Seed:        parsed.header.seed,
-		PoolSatoshi: parsed.header.poolSatoshi,
-		WinnerCount: parsed.header.winnerCount,
-		Balances:    parsed.balances,
-		Params: service.LotteryParams{
-			PlatformFeePercentage: parsed.header.platformFeePercentage,
-			DustThresholdSatoshi:  parsed.header.dustThresholdSatoshi,
-			PayoutFeeMultiplier:   parsed.header.payoutFeeMultiplier,
-			FeeRateSatVb:          parsed.header.feeRateSatVb,
-			FeeRateDecimal:        parsed.header.feeRateDecimal,
-			MinFeeRateSatVb:       parsed.header.minFeeRateSatVb,
-			TxOverheadVBytes:      parsed.header.txOverheadVBytes,
-			InputP2WSHBytes:       parsed.header.inputP2WSHBytes,
-			OutputDefaultVBytes:   parsed.header.outputDefaultVBytes,
-		},
-	}
+	ctx := lotteryContextFrom(parsed)
 
 	lottery := service.NewLotteryService()
 	result, err := lottery.Compute(ctx)
@@ -189,6 +186,7 @@ func main() {
 	issues := compareResults(parsed, result)
 	if len(issues) == 0 {
 		fmt.Println("Verification passed. The lottery result matches the report.")
+		printSettlementBlocks(parsed.header)
 		return
 	}
 
@@ -254,9 +252,18 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 		switch strings.ToLower(strings.TrimSpace(record[0])) {
 		case "header":
 			parsed.header.seed = cols.require(record, "header", "seed")
-			// Present only under BTC-Time scoring; older reports simply omit it.
+			// Version 1 and 2 carry one settlement height; version 3 carries
+			// two blocks. Both shapes are read here, by name, so one build
+			// verifies every report this tool has ever been given.
 			if raw, ok := cols.lookup(record, "settlement_block_height"); ok && raw != "" {
 				parsed.header.settlementBlockHeight = mustInt64(raw, "settlement_block_height")
+			}
+			if raw, ok := cols.lookup(record, "score_block_height"); ok && raw != "" {
+				parsed.header.scoreBlockHeight = mustInt64(raw, "score_block_height")
+			}
+			parsed.header.scoreBlockHash, _ = cols.lookup(record, "score_block_hash")
+			if raw, ok := cols.lookup(record, "seed_block_height"); ok && raw != "" {
+				parsed.header.seedBlockHeight = mustInt64(raw, "seed_block_height")
 			}
 			parsed.header.poolSatoshi = mustInt64(cols.require(record, "header", "pool_satoshi"), "pool_satoshi")
 			parsed.header.winnerCount = mustInt(cols.require(record, "header", "winner_count"), "winner_count")
@@ -506,4 +513,50 @@ func printVerificationFailed(reason string) {
 
 func newParseError(label string, raw string) error {
 	return fmt.Errorf("invalid %s: %s", label, raw)
+}
+
+// printSettlementBlocks names the blocks a report was settled on, so the two
+// heights are something a reader can act on rather than columns parsed and
+// discarded.
+//
+// This tool does not reach the network, so it cannot confirm that the seed
+// really is the hash of the block at that height - only that the draw follows
+// from the seed the report states. Naming the height is what lets someone go
+// and check that last step on a block explorer.
+func printSettlementBlocks(h headerRow) {
+	switch {
+	case h.seedBlockHeight > 0:
+		fmt.Printf("  scoring ended at block %d\n", h.scoreBlockHeight)
+		fmt.Printf("  seed came from block %d (%s)\n", h.seedBlockHeight, h.seed)
+	case h.settlementBlockHeight > 0:
+		// Version 1 and 2: one block did both jobs.
+		fmt.Printf("  settled at block %d, which also supplied the seed (%s)\n",
+			h.settlementBlockHeight, h.seed)
+	}
+}
+
+// lotteryContextFrom turns a parsed report into the lottery's input.
+//
+// One function rather than one per caller. The tests replay the draw the same
+// way main does, and building the context twice meant a field could be added
+// here, missed there, and every test would still pass while checking a
+// different computation than the one the tool performs.
+func lotteryContextFrom(parsed *parsedCSV) service.LotteryContext {
+	return service.LotteryContext{
+		Seed:        parsed.header.seed,
+		PoolSatoshi: parsed.header.poolSatoshi,
+		WinnerCount: parsed.header.winnerCount,
+		Balances:    parsed.balances,
+		Params: service.LotteryParams{
+			PlatformFeePercentage: parsed.header.platformFeePercentage,
+			DustThresholdSatoshi:  parsed.header.dustThresholdSatoshi,
+			PayoutFeeMultiplier:   parsed.header.payoutFeeMultiplier,
+			FeeRateSatVb:          parsed.header.feeRateSatVb,
+			FeeRateDecimal:        parsed.header.feeRateDecimal,
+			MinFeeRateSatVb:       parsed.header.minFeeRateSatVb,
+			TxOverheadVBytes:      parsed.header.txOverheadVBytes,
+			InputP2WSHBytes:       parsed.header.inputP2WSHBytes,
+			OutputDefaultVBytes:   parsed.header.outputDefaultVBytes,
+		},
+	}
 }

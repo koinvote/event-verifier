@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -16,7 +18,7 @@ import (
 // The older two are the point of this test. A payout is a public record, and a
 // tool that can only check the most recent one is not much of a check.
 func TestBundledReportsVerify(t *testing.T) {
-	for _, path := range []string{"example-v2.csv", "example.csv", "example-legacy.csv"} {
+	for _, path := range []string{"example-v3.csv", "example-v2.csv", "example.csv", "example-legacy.csv"} {
 		t.Run(path, func(t *testing.T) {
 			parsed, err := loadReport(path)
 			if err != nil {
@@ -151,4 +153,145 @@ func TestVersion2FeePolicyIsAudited(t *testing.T) {
 			t.Errorf("a version 1 report was audited against version 2 policy: %v", issues)
 		}
 	})
+}
+
+// Version 3 split the settlement block in two: one ending the scoring window
+// and one, six blocks later, supplying the seed. The split exists so that
+// whoever mines the seed block cannot see which balances are being weighted -
+// those were fixed six blocks earlier.
+func TestVersion3CarriesBothSettlementBlocks(t *testing.T) {
+	parsed, err := loadReport("example-v3.csv")
+	if err != nil {
+		t.Fatalf("load: %v", err)
+	}
+	if parsed.header.schemaVersion != 3 {
+		t.Fatalf("schema version = %d, want 3", parsed.header.schemaVersion)
+	}
+	if parsed.header.scoreBlockHeight == 0 || parsed.header.seedBlockHeight == 0 {
+		t.Fatalf("v3 report parsed without both heights: score=%d seed=%d",
+			parsed.header.scoreBlockHeight, parsed.header.seedBlockHeight)
+	}
+	if got := parsed.header.seedBlockHeight - parsed.header.scoreBlockHeight; got != 6 {
+		t.Errorf("seed and score are %d blocks apart, want 6", got)
+	}
+	// The single-block field must stay empty. A v3 file that also set it would
+	// be claiming both shapes at once.
+	if parsed.header.settlementBlockHeight != 0 {
+		t.Errorf("v3 report also carries settlement_block_height = %d",
+			parsed.header.settlementBlockHeight)
+	}
+}
+
+// Older reports must keep the shape they were written with. A payout is a
+// public record; a tool that can only check the most recent one is not much of
+// a check.
+func TestOlderReportsKeepTheSingleSettlementBlock(t *testing.T) {
+	for _, path := range []string{"example-v2.csv", "example.csv"} {
+		t.Run(path, func(t *testing.T) {
+			parsed, err := loadReport(path)
+			if err != nil {
+				t.Fatalf("load: %v", err)
+			}
+			if parsed.header.settlementBlockHeight == 0 {
+				t.Error("lost the settlement height this format carries")
+			}
+			if parsed.header.seedBlockHeight != 0 || parsed.header.scoreBlockHeight != 0 {
+				t.Errorf("read version 3 columns out of a version %d report",
+					parsed.header.schemaVersion)
+			}
+		})
+	}
+}
+
+// Tampering with a recorded amount has to make the check fail - that is what
+// "you can verify it yourself" means. The draw and the split are replayed from
+// the file, so a figure that was edited afterwards no longer follows from them.
+func TestATamperedWinnerAmountFailsVerification(t *testing.T) {
+	parsed := loadTampered(t, func(line string) (string, bool) {
+		if !strings.HasPrefix(line, "result_winner,") {
+			return line, false
+		}
+		f := strings.Split(line, ",")
+		f[6] = "999999999" // final_reward_satoshi
+		return strings.Join(f, ","), true
+	})
+
+	result, err := service.NewLotteryService().Compute(lotteryContextFrom(parsed))
+	if err != nil {
+		t.Fatalf("compute: %v", err)
+	}
+	if issues := compareResults(parsed, result); len(issues) == 0 {
+		t.Error("an edited payout amount verified clean")
+	}
+}
+
+// Substituting the seed in THIS report does not fail, and the tool is right.
+//
+// The bundled fixture draws 4 winners from 5 participants whose smallest score
+// is a millionth of the others, so the small holder is never drawn and the same
+// four come out under every seed - measured across 2000 of them. The amounts
+// are then split in proportion to score, which the seed does not touch. The
+// report is genuinely consistent with either seed, and saying "passed" is the
+// correct answer to the question this tool asks.
+//
+// What it means is that no single report can demonstrate the seed matters.
+// TestTheSeedDecidesTheDraw does that, with a fixture built for it: 2 winners
+// from 5 participants within one order of magnitude, where 400 seeds produce 10
+// different winner sets.
+//
+// This test exists so nobody reads the passing result above as "seeds are not
+// checked" and goes looking for a bug that is not there.
+func TestSubstitutingTheSeedOnThisFixtureIsNotDetectable(t *testing.T) {
+	parsed := loadTampered(t, func(line string) (string, bool) {
+		const seed = "0000000000000000000123abcdeadbeef"
+		if !strings.Contains(line, seed) {
+			return line, false
+		}
+		return strings.Replace(line, seed, "ffffffffffffffffffffffffffffffff", 1), true
+	})
+
+	result, err := service.NewLotteryService().Compute(lotteryContextFrom(parsed))
+	if err != nil {
+		t.Fatalf("compute: %v", err)
+	}
+	if issues := compareResults(parsed, result); len(issues) != 0 {
+		t.Errorf("this fixture became seed-sensitive; the note above is now wrong: %v", issues)
+	}
+}
+
+// loadTampered rewrites one line of the v3 example and loads the result. It
+// fails the test if nothing matched, so a fixture change cannot quietly turn a
+// tampering test into a test of the untouched file.
+func loadTampered(t *testing.T, edit func(string) (string, bool)) *parsedCSV {
+	t.Helper()
+
+	raw, err := os.ReadFile("example-v3.csv")
+	if err != nil {
+		t.Fatalf("read: %v", err)
+	}
+
+	lines := strings.Split(string(raw), "\n")
+	changed := false
+	for i, line := range lines {
+		if changed {
+			break
+		}
+		if out, did := edit(line); did {
+			lines[i], changed = out, true
+		}
+	}
+	if !changed {
+		t.Fatal("nothing in the fixture matched the edit; this test is no longer testing what it says")
+	}
+
+	path := filepath.Join(t.TempDir(), "tampered.csv")
+	if err := os.WriteFile(path, []byte(strings.Join(lines, "\n")), 0o600); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+
+	parsed, err := loadReport(path)
+	if err != nil {
+		t.Fatalf("a tampered file should still parse, so the mismatch is what reports it: %v", err)
+	}
+	return parsed
 }
