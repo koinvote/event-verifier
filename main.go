@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/csv"
+	"encoding/hex"
 	"errors"
 	"flag"
 	"fmt"
@@ -129,7 +132,25 @@ type parsedCSV struct {
 	winners   []resultWinner
 	hasHeader bool
 	hasResult bool
+
+	// sha256 of the exact bytes that were verified.
+	//
+	// "Verification passed" only says the arithmetic in this file is
+	// self-consistent. It cannot say the file is the one that was published,
+	// because the tool has no way to know what was published - so it prints the
+	// digest and leaves that comparison to the reader, who does.
+	sha256 string
+	// unknownRowTypes are row kinds this build does not recognise, kept so the
+	// schema-version check can produce its better message first.
+	unknownRowTypes []string
 }
+
+// maxReportBytes bounds what will be read.
+//
+// Without it `--report /dev/zero` never returns and the user sees a tool that
+// hung with no output. A payout report is one row per participant; the largest
+// event to date is under 40 KB, and this allows four thousand times that.
+const maxReportBytes = 64 << 20
 
 const toolVersion = "2.0.0"
 
@@ -186,6 +207,10 @@ func main() {
 	issues := compareResults(parsed, result)
 	if len(issues) == 0 {
 		fmt.Println("Verification passed. The lottery result matches the report.")
+		// Passing says the arithmetic in this file is consistent. Whether it is
+		// the file that was published is a different question, and only the
+		// reader can answer it - so give them the thing to compare.
+		fmt.Printf("SHA-256 of the file verified: %s\n", parsed.sha256)
 		printSettlementBlocks(parsed.header)
 		return
 	}
@@ -223,10 +248,30 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 	}
 	defer file.Close()
 
-	reader := csv.NewReader(file)
+	// Read one byte past the limit so hitting it is distinguishable from a file
+	// that happens to be exactly that size. Reading it all in also gives the
+	// digest below the exact bytes that were parsed, rather than a second read
+	// of a file that might have changed in between.
+	raw, err := io.ReadAll(io.LimitReader(file, maxReportBytes+1))
+	if err != nil {
+		return nil, fmt.Errorf("failed to read report: %w", err)
+	}
+	if len(raw) > maxReportBytes {
+		return nil, fmt.Errorf("report is larger than %d MB; a payout report is a few tens of kilobytes, so this is not one",
+			maxReportBytes>>20)
+	}
+
+	digest := sha256.Sum256(raw)
+
+	// Opening a report in Excel and saving it adds a UTF-8 byte order mark. The
+	// content is unchanged, so refusing it would report a tampered file when
+	// nothing was tampered with.
+	raw = bytes.TrimPrefix(raw, []byte{0xEF, 0xBB, 0xBF})
+
+	reader := csv.NewReader(bytes.NewReader(raw))
 	reader.FieldsPerRecord = -1
 
-	parsed = &parsedCSV{}
+	parsed = &parsedCSV{sha256: hex.EncodeToString(digest[:])}
 	var cols columns
 	for {
 		record, err := reader.Read()
@@ -319,6 +364,13 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 				finalRewardSatoshi:    mustInt64(cols.require(record, "result_winner", "final_reward_satoshi"), "final_reward_satoshi"),
 				isDust:                mustBool(cols.require(record, "result_winner", "is_dust"), "is_dust"),
 			})
+
+		default:
+			// Anything appended to a valid report used to land here and be
+			// dropped, so a file with extra bytes on the end still verified.
+			// A tool that cannot account for what it read has no business
+			// saying the file checks out.
+			parsed.unknownRowTypes = appendUnique(parsed.unknownRowTypes, strings.TrimSpace(record[0]))
 		}
 	}
 
@@ -330,6 +382,21 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 			"report uses schema version %d but this build only understands up to %d; "+
 				"download the current verifier from https://github.com/koinvote/event-verifier",
 			parsed.header.schemaVersion, maxSupportedSchemaVersion)
+	}
+	// After the schema check on purpose: a report from a newer build is also
+	// full of rows this one does not know, and "download the current verifier"
+	// is the useful thing to say about it.
+	if len(parsed.unknownRowTypes) > 0 {
+		// Quoted because the value came from the file and may be arbitrary
+		// bytes; the point of this message is that something unexpected is in
+		// there, and printing it raw would put it straight into a terminal.
+		quoted := make([]string, 0, len(parsed.unknownRowTypes))
+		for _, t := range parsed.unknownRowTypes {
+			quoted = append(quoted, fmt.Sprintf("%q", t))
+		}
+		return nil, fmt.Errorf("report contains %d row kind(s) this build does not understand (%s); "+
+			"it may have been edited or truncated",
+			len(parsed.unknownRowTypes), strings.Join(quoted, ", "))
 	}
 	if !parsed.hasResult {
 		return nil, fmt.Errorf("missing result_summary row")
@@ -559,4 +626,18 @@ func lotteryContextFrom(parsed *parsedCSV) service.LotteryContext {
 			OutputDefaultVBytes:   parsed.header.outputDefaultVBytes,
 		},
 	}
+}
+
+// appendUnique keeps the list of unrecognised row kinds short: a file with ten
+// thousand junk rows should name the kind once, not ten thousand times.
+func appendUnique(list []string, value string) []string {
+	for _, existing := range list {
+		if existing == value {
+			return list
+		}
+	}
+	if len(list) >= 10 {
+		return list
+	}
+	return append(list, value)
 }
