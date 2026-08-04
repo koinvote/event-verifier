@@ -61,22 +61,52 @@ macOS / Linux:
 ## Output
 
 - Success:
-  - `Verification passed. The lottery result matches the report.`
-  - `SHA-256 of the file verified: <digest>`
+  - `Verification passed. The draw was computed correctly from the scores and
+    seed this report states.`
+  - followed by the two checks the tool cannot make for you
 - Failure:
   - `Verification failed. Possible causes: report file is incorrect or incomplete; tool version mismatch; input parameters are incorrect.`
 
-### 🚨 「通過」是什麼意思，以及它不保證什麼
+### 🚨 「通過」是什麼意思，以及還有哪兩件事要你自己做
 
-通過代表**這個檔案裡的數字彼此一致**：用同樣的種子與同樣的積分重算，中獎者與金額
-跟報告寫的一樣。
+通過代表**用報告自己列出的積分與種子重算，中獎者與金額跟報告寫的一樣**。
 
-它**不代表這就是官方公布的那一份檔案**——這支工具無從得知公布的版本長什麼樣。
-所以它會印出所讀檔案的 SHA-256，**請自行拿它跟公布的值比對**。兩件事都成立才是完整的驗證。
+它**沒有**回答另外兩個問題，而且這支工具答不了——它只讀一個檔案、不連任何網路，
+那正是任何人都能拿去跑而不必信任它連到哪裡的原因。所以通過之後它會把那兩件事列出來：
 
-工具會拒絕它看不懂的內容（尾端多出來的位元組、不認得的列）：一個無法解釋自己讀到什麼的
-工具，沒有立場說這個檔案沒問題。用 Excel 開啟再存檔會加上 BOM，那**不影響驗證**，
-因為內容沒有被改動。
+**1. 這是不是官方公布的那份檔案**
+
+工具印出所讀檔案的 SHA-256。活動頁面的「驗證包」區塊、CSV 下載按鈕旁邊就寫著官方的值
+（API 也會在 `X-CSV-SHA256` 這個 header 回傳同一個值）。**兩者相同才代表檔案沒被動過。**
+
+⚠️ 摘要與 CSV 來自同一個回應，所以它擋的是**傳輸途中或第三方轉載的竄改**，
+不是後端自己說謊。
+
+**2. 種子是不是真的是那顆區塊的雜湊**
+
+報告會說種子來自哪個區塊。**去任何區塊瀏覽器查那個高度，比對雜湊。**
+工具會把那個高度印出來，但它是**報告自己的說法，工具沒有驗證它**——
+把 `seed_block_height` 改成任何數字，驗證一樣會通過，因為抽獎取決於種子的值，
+而不是取決於誰說它來自哪個區塊。
+
+### 想確認它真的在重算、不只是在比對檔案？
+
+改一個數字再跑一次。把某個參與者的 `holding_score_sat_blocks` 改大，工具會說：
+
+```
+- lottery weight mismatch for bc1qbbb: report=100800000000 computed=999900000000
+- original_reward_satoshi mismatch for bc1qbbb: report=17821717 computed=63907475
+```
+
+它報告的是「你給的輸入重算出來是這個，跟報告寫的不一樣」——一個只做檔案指紋比對的
+工具說不出這種話。
+
+### 它會拒絕看不懂的東西
+
+尾端多出來的位元組、不認得的列，都會被拒絕：一個無法解釋自己讀到什麼的工具，
+沒有立場說這個檔案沒問題。
+
+用 Excel 開啟再存檔會加上 BOM，那**不影響驗證**——內容沒有被改動。
 
 Exit status is `0` when verification passes and `1` when it does not, so the
 tool can be used in a script.

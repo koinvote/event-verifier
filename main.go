@@ -206,12 +206,9 @@ func main() {
 
 	issues := compareResults(parsed, result)
 	if len(issues) == 0 {
-		fmt.Println("Verification passed. The lottery result matches the report.")
-		// Passing says the arithmetic in this file is consistent. Whether it is
-		// the file that was published is a different question, and only the
-		// reader can answer it - so give them the thing to compare.
-		fmt.Printf("SHA-256 of the file verified: %s\n", parsed.sha256)
-		printSettlementBlocks(parsed.header)
+		fmt.Println("Verification passed. The draw was computed correctly from the")
+		fmt.Println("scores and seed this report states.")
+		printWhatIsStillYours(parsed)
 		return
 	}
 
@@ -590,15 +587,49 @@ func newParseError(label string, raw string) error {
 // really is the hash of the block at that height - only that the draw follows
 // from the seed the report states. Naming the height is what lets someone go
 // and check that last step on a block explorer.
-func printSettlementBlocks(h headerRow) {
+// printWhatIsStillYours states the two checks this tool cannot make.
+//
+// Everything below the "passed" line used to be printed as though it had been
+// verified. It had not. The block heights and hashes are read straight out of
+// the report and echoed back, so a report that named the wrong block was passed
+// and its claim repeated underneath the word "passed" - changing
+// seed_block_height to any number at all still verifies, because the draw
+// depends on the seed value and not on which block is said to have produced it.
+//
+// The tool cannot check them: it reads one file and touches no network, which is
+// what lets anyone run it without trusting anything it connects to. So they are
+// presented as the reader's remaining work rather than as findings, and the
+// values are labelled as the report's claims.
+func printWhatIsStillYours(parsed *parsedCSV) {
+	h := parsed.header
+
+	fmt.Println()
+	fmt.Println("Two things this tool cannot check for you:")
+	fmt.Println()
+	fmt.Println("1. Whether this is the file that was published.")
+	fmt.Printf("   SHA-256 of the file read: %s\n", parsed.sha256)
+	fmt.Println("   Compare it with the digest shown next to the download link.")
+	fmt.Println()
+	fmt.Println("2. Whether the seed is really that block's hash.")
+	fmt.Printf("   The report says the seed is %s\n", h.seed)
 	switch {
 	case h.seedBlockHeight > 0:
-		fmt.Printf("  scoring ended at block %d\n", h.scoreBlockHeight)
-		fmt.Printf("  seed came from block %d (%s)\n", h.seedBlockHeight, h.seed)
+		fmt.Printf("   and that it came from block %d, with scoring ending at block %d.\n",
+			h.seedBlockHeight, h.scoreBlockHeight)
+		fmt.Println("   Look that block up in any block explorer and compare the hash.")
+		fmt.Println("   Those heights are the report's own claim; nothing here verified them.")
 	case h.settlementBlockHeight > 0:
 		// Version 1 and 2: one block did both jobs.
-		fmt.Printf("  settled at block %d, which also supplied the seed (%s)\n",
-			h.settlementBlockHeight, h.seed)
+		fmt.Printf("   and that it came from block %d, which also ended the scoring.\n",
+			h.settlementBlockHeight)
+		fmt.Println("   Look that block up in any block explorer and compare the hash.")
+		fmt.Println("   That height is the report's own claim; nothing here verified it.")
+	default:
+		// Nothing to look up, so do not send the reader looking. Searching a
+		// block explorer for the hash itself still works and is the only route
+		// left; saying so beats a sentence about a block that was never named.
+		fmt.Println("   This report does not name the block it came from.")
+		fmt.Println("   Search that hash in a block explorer to see whether it is a real block.")
 	}
 }
 

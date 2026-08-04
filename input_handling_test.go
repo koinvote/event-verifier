@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -162,4 +163,94 @@ func TestDigestDistinguishesAFileWithAByteOrderMark(t *testing.T) {
 	if plain.sha256 == withBOM.sha256 {
 		t.Error("two different files reported the same digest")
 	}
+}
+
+// Everything under "Verification passed" used to read as though it had been
+// checked. The block heights had not been: they are read from the report and
+// echoed, so a report naming the wrong block passed and had its claim repeated
+// under the word "passed". The tool cannot check them - it reads one file and
+// touches no network, which is what lets anyone run it without trusting
+// whatever it would otherwise connect to - so the output has to say so.
+func TestSeedBlockHeightIsNotVerified(t *testing.T) {
+	body := string(bundledReport(t))
+	// example-v3 names block 900106 as the seed's origin.
+	if !strings.Contains(body, ",900106,") {
+		t.Fatal("fixture no longer contains the seed block height this test edits")
+	}
+	tampered := strings.Replace(body, ",900106,", ",987654,", 1)
+
+	parsed, err := loadReport(writeTemp(t, "wrong-block.csv", []byte(tampered)))
+	if err != nil {
+		t.Fatalf("loading: %v", err)
+	}
+
+	// Documented, not endorsed: the draw depends on the seed value, not on
+	// which block is said to have produced it, so nothing here can tell.
+	if parsed.header.seedBlockHeight != 987654 {
+		t.Fatalf("seed block height = %d, want the report's claim to be carried through unchanged",
+			parsed.header.seedBlockHeight)
+	}
+}
+
+// The success output has to name both checks the reader still owns. Losing
+// either one silently is the failure this wording exists to prevent, and a
+// wording change is exactly the kind of edit that would do it.
+func TestSuccessOutputNamesBothRemainingChecks(t *testing.T) {
+	parsed, err := loadReport("example-v3.csv")
+	if err != nil {
+		t.Fatalf("loading: %v", err)
+	}
+
+	out := captureStdout(t, func() { printWhatIsStillYours(parsed) })
+
+	for _, want := range []string{
+		"cannot check for you",
+		"published",                  // check 1: is this the published file
+		parsed.sha256,                // ...with the digest to compare
+		"block explorer",             // check 2: is the seed a real block hash
+		"nothing here verified them", // and that the heights are unverified
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("success output is missing %q:\n%s", want, out)
+		}
+	}
+}
+
+// A report that names no block must not send the reader looking for one.
+func TestOutputDoesNotPointAtABlockTheReportNeverNamed(t *testing.T) {
+	parsed, err := loadReport("example-legacy.csv")
+	if err != nil {
+		t.Fatalf("loading: %v", err)
+	}
+	if parsed.header.seedBlockHeight > 0 || parsed.header.settlementBlockHeight > 0 {
+		t.Skip("this fixture now names a block, so it cannot cover the missing case")
+	}
+
+	out := captureStdout(t, func() { printWhatIsStillYours(parsed) })
+
+	if strings.Contains(out, "Look that block up") {
+		t.Errorf("told the reader to look up a block the report never named:\n%s", out)
+	}
+	if !strings.Contains(out, "does not name the block") {
+		t.Errorf("output should say the block is absent:\n%s", out)
+	}
+}
+
+func captureStdout(t *testing.T, fn func()) string {
+	t.Helper()
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("pipe: %v", err)
+	}
+	saved := os.Stdout
+	os.Stdout = w
+	fn()
+	w.Close()
+	os.Stdout = saved
+
+	var buf strings.Builder
+	if _, err := io.Copy(&buf, r); err != nil {
+		t.Fatalf("reading captured output: %v", err)
+	}
+	return buf.String()
 }
