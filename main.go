@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/csv"
+	"encoding/hex"
 	"errors"
 	"flag"
 	"fmt"
@@ -129,7 +132,25 @@ type parsedCSV struct {
 	winners   []resultWinner
 	hasHeader bool
 	hasResult bool
+
+	// sha256 of the exact bytes that were verified.
+	//
+	// "Verification passed" only says the arithmetic in this file is
+	// self-consistent. It cannot say the file is the one that was published,
+	// because the tool has no way to know what was published - so it prints the
+	// digest and leaves that comparison to the reader, who does.
+	sha256 string
+	// unknownRowTypes are row kinds this build does not recognise, kept so the
+	// schema-version check can produce its better message first.
+	unknownRowTypes []string
 }
+
+// maxReportBytes bounds what will be read.
+//
+// Without it `--report /dev/zero` never returns and the user sees a tool that
+// hung with no output. A payout report is one row per participant; the largest
+// event to date is under 40 KB, and this allows four thousand times that.
+const maxReportBytes = 64 << 20
 
 const toolVersion = "2.0.0"
 
@@ -186,7 +207,7 @@ func main() {
 	issues := compareResults(parsed, result)
 	if len(issues) == 0 {
 		fmt.Println("Verification passed. The lottery result matches the report.")
-		printSettlementBlocks(parsed.header)
+		printRemainingChecks(parsed)
 		return
 	}
 
@@ -223,10 +244,30 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 	}
 	defer file.Close()
 
-	reader := csv.NewReader(file)
+	// Read one byte past the limit so hitting it is distinguishable from a file
+	// that happens to be exactly that size. Reading it all in also gives the
+	// digest below the exact bytes that were parsed, rather than a second read
+	// of a file that might have changed in between.
+	raw, err := io.ReadAll(io.LimitReader(file, maxReportBytes+1))
+	if err != nil {
+		return nil, fmt.Errorf("failed to read report: %w", err)
+	}
+	if len(raw) > maxReportBytes {
+		return nil, fmt.Errorf("report is larger than %d MB; a payout report is a few tens of kilobytes, so this is not one",
+			maxReportBytes>>20)
+	}
+
+	digest := sha256.Sum256(raw)
+
+	// Opening a report in Excel and saving it adds a UTF-8 byte order mark. The
+	// content is unchanged, so refusing it would report a tampered file when
+	// nothing was tampered with.
+	raw = bytes.TrimPrefix(raw, []byte{0xEF, 0xBB, 0xBF})
+
+	reader := csv.NewReader(bytes.NewReader(raw))
 	reader.FieldsPerRecord = -1
 
-	parsed = &parsedCSV{}
+	parsed = &parsedCSV{sha256: hex.EncodeToString(digest[:])}
 	var cols columns
 	for {
 		record, err := reader.Read()
@@ -319,6 +360,13 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 				finalRewardSatoshi:    mustInt64(cols.require(record, "result_winner", "final_reward_satoshi"), "final_reward_satoshi"),
 				isDust:                mustBool(cols.require(record, "result_winner", "is_dust"), "is_dust"),
 			})
+
+		default:
+			// Anything appended to a valid report used to land here and be
+			// dropped, so a file with extra bytes on the end still verified.
+			// A tool that cannot account for what it read has no business
+			// saying the file checks out.
+			parsed.unknownRowTypes = appendUnique(parsed.unknownRowTypes, strings.TrimSpace(record[0]))
 		}
 	}
 
@@ -330,6 +378,21 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 			"report uses schema version %d but this build only understands up to %d; "+
 				"download the current verifier from https://github.com/koinvote/event-verifier",
 			parsed.header.schemaVersion, maxSupportedSchemaVersion)
+	}
+	// After the schema check on purpose: a report from a newer build is also
+	// full of rows this one does not know, and "download the current verifier"
+	// is the useful thing to say about it.
+	if len(parsed.unknownRowTypes) > 0 {
+		// Quoted because the value came from the file and may be arbitrary
+		// bytes; the point of this message is that something unexpected is in
+		// there, and printing it raw would put it straight into a terminal.
+		quoted := make([]string, 0, len(parsed.unknownRowTypes))
+		for _, t := range parsed.unknownRowTypes {
+			quoted = append(quoted, fmt.Sprintf("%q", t))
+		}
+		return nil, fmt.Errorf("report contains %d row kind(s) this build does not understand (%s); "+
+			"it may have been edited or truncated",
+			len(parsed.unknownRowTypes), strings.Join(quoted, ", "))
 	}
 	if !parsed.hasResult {
 		return nil, fmt.Errorf("missing result_summary row")
@@ -354,6 +417,44 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 // take. That is a weaker claim than version 1's arithmetic check, and it is the
 // honest one - the alternative was to keep pretending a hardcoded constant was
 // a market rate.
+// scoreBlockOffset is the fixed distance between the block that supplied the
+// seed and the block scoring stopped at.
+//
+// Two blocks rather than one, because they answer different questions: the
+// scoring block decides whose balance counts, the seed block decides who wins.
+// Fixing the weights six blocks before the seed exists means the miner of the
+// seed block cannot see what their hash would pay out - the weights were
+// already settled when they started mining.
+//
+// The backend's own constant, restated here. This tool already restates the
+// draw itself; a rule that decides which block may be used is no different, and
+// leaving it out meant the two heights were printed and never questioned.
+const scoreBlockOffset = 6
+
+// checkSettlementBlocks verifies the one thing about the settlement blocks that
+// can be checked without touching a chain: their distance from each other.
+//
+// Whether either block is real is for the reader and a block explorer. Whether
+// they are the right distance apart is arithmetic, and it was going unchecked -
+// a report could name any pair of heights and this tool would print them under
+// "verification passed" without comment.
+func checkSettlementBlocks(parsed *parsedCSV) []string {
+	h := parsed.header
+
+	// Version 1 and 2 settle on one block that does both jobs, so there is no
+	// distance to check.
+	if h.seedBlockHeight == 0 || h.scoreBlockHeight == 0 {
+		return nil
+	}
+
+	if gap := h.seedBlockHeight - h.scoreBlockHeight; gap != scoreBlockOffset {
+		return []string{fmt.Sprintf(
+			"settlement blocks are %d apart: score_block_height=%d seed_block_height=%d, expected a gap of %d",
+			gap, h.scoreBlockHeight, h.seedBlockHeight, scoreBlockOffset)}
+	}
+	return nil
+}
+
 func checkFeePolicy(parsed *parsedCSV) []string {
 	if parsed.header.schemaVersion < 2 {
 		return nil
@@ -418,6 +519,7 @@ func compareResults(parsed *parsedCSV, result *service.LotteryResult) []string {
 	}
 
 	issues = append(issues, checkFeePolicy(parsed)...)
+	issues = append(issues, checkSettlementBlocks(parsed)...)
 
 	computed := make(map[string]service.WinnerResult, len(result.Winners))
 	for _, winner := range result.Winners {
@@ -523,16 +625,36 @@ func newParseError(label string, raw string) error {
 // really is the hash of the block at that height - only that the draw follows
 // from the seed the report states. Naming the height is what lets someone go
 // and check that last step on a block explorer.
-func printSettlementBlocks(h headerRow) {
+// printRemainingChecks names what is left for the reader to do.
+//
+// Only things they can act on. The scoring block height used to be printed too
+// and there is nothing to do with it: no explorer can say whether a height is
+// the right cutoff, and its one checkable property - the distance to the seed
+// block - is now checked here rather than recited.
+//
+// Everything in the file is the report's own claim; that is what a verifier is
+// for. What earns a line is being the reader's cheapest way to test one, and
+// these two are minutes of work against a claim that would otherwise rest on
+// trust: a seed that was chosen rather than taken from a block picks the
+// winners outright, and a file that is not the published one makes the rest of
+// this output describe some other document.
+func printRemainingChecks(parsed *parsedCSV) {
+	h := parsed.header
+
 	switch {
 	case h.seedBlockHeight > 0:
-		fmt.Printf("  scoring ended at block %d\n", h.scoreBlockHeight)
-		fmt.Printf("  seed came from block %d (%s)\n", h.seedBlockHeight, h.seed)
+		fmt.Printf("  seed came from block %d (%s) - check it in a block explorer\n",
+			h.seedBlockHeight, h.seed)
 	case h.settlementBlockHeight > 0:
 		// Version 1 and 2: one block did both jobs.
-		fmt.Printf("  settled at block %d, which also supplied the seed (%s)\n",
+		fmt.Printf("  seed came from block %d (%s) - check it in a block explorer\n",
 			h.settlementBlockHeight, h.seed)
+	default:
+		fmt.Printf("  seed is %s - the report does not say which block it came from\n", h.seed)
 	}
+
+	fmt.Printf("  SHA-256 of this file: %s - compare with the digest beside the download link\n",
+		parsed.sha256)
 }
 
 // lotteryContextFrom turns a parsed report into the lottery's input.
@@ -559,4 +681,18 @@ func lotteryContextFrom(parsed *parsedCSV) service.LotteryContext {
 			OutputDefaultVBytes:   parsed.header.outputDefaultVBytes,
 		},
 	}
+}
+
+// appendUnique keeps the list of unrecognised row kinds short: a file with ten
+// thousand junk rows should name the kind once, not ten thousand times.
+func appendUnique(list []string, value string) []string {
+	for _, existing := range list {
+		if existing == value {
+			return list
+		}
+	}
+	if len(list) >= 10 {
+		return list
+	}
+	return append(list, value)
 }
