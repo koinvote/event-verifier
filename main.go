@@ -207,11 +207,7 @@ func main() {
 	issues := compareResults(parsed, result)
 	if len(issues) == 0 {
 		fmt.Println("Verification passed. The lottery result matches the report.")
-		// Passing says the arithmetic in this file is consistent. Whether it is
-		// the file that was published is a different question, and only the
-		// reader can answer it - so give them the thing to compare.
-		fmt.Printf("SHA-256 of the file verified: %s\n", parsed.sha256)
-		printSettlementBlocks(parsed.header)
+		printRemainingChecks(parsed)
 		return
 	}
 
@@ -421,6 +417,44 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 // take. That is a weaker claim than version 1's arithmetic check, and it is the
 // honest one - the alternative was to keep pretending a hardcoded constant was
 // a market rate.
+// scoreBlockOffset is the fixed distance between the block that supplied the
+// seed and the block scoring stopped at.
+//
+// Two blocks rather than one, because they answer different questions: the
+// scoring block decides whose balance counts, the seed block decides who wins.
+// Fixing the weights six blocks before the seed exists means the miner of the
+// seed block cannot see what their hash would pay out - the weights were
+// already settled when they started mining.
+//
+// The backend's own constant, restated here. This tool already restates the
+// draw itself; a rule that decides which block may be used is no different, and
+// leaving it out meant the two heights were printed and never questioned.
+const scoreBlockOffset = 6
+
+// checkSettlementBlocks verifies the one thing about the settlement blocks that
+// can be checked without touching a chain: their distance from each other.
+//
+// Whether either block is real is for the reader and a block explorer. Whether
+// they are the right distance apart is arithmetic, and it was going unchecked -
+// a report could name any pair of heights and this tool would print them under
+// "verification passed" without comment.
+func checkSettlementBlocks(parsed *parsedCSV) []string {
+	h := parsed.header
+
+	// Version 1 and 2 settle on one block that does both jobs, so there is no
+	// distance to check.
+	if h.seedBlockHeight == 0 || h.scoreBlockHeight == 0 {
+		return nil
+	}
+
+	if gap := h.seedBlockHeight - h.scoreBlockHeight; gap != scoreBlockOffset {
+		return []string{fmt.Sprintf(
+			"settlement blocks are %d apart: score_block_height=%d seed_block_height=%d, expected a gap of %d",
+			gap, h.scoreBlockHeight, h.seedBlockHeight, scoreBlockOffset)}
+	}
+	return nil
+}
+
 func checkFeePolicy(parsed *parsedCSV) []string {
 	if parsed.header.schemaVersion < 2 {
 		return nil
@@ -485,6 +519,7 @@ func compareResults(parsed *parsedCSV, result *service.LotteryResult) []string {
 	}
 
 	issues = append(issues, checkFeePolicy(parsed)...)
+	issues = append(issues, checkSettlementBlocks(parsed)...)
 
 	computed := make(map[string]service.WinnerResult, len(result.Winners))
 	for _, winner := range result.Winners {
@@ -590,16 +625,36 @@ func newParseError(label string, raw string) error {
 // really is the hash of the block at that height - only that the draw follows
 // from the seed the report states. Naming the height is what lets someone go
 // and check that last step on a block explorer.
-func printSettlementBlocks(h headerRow) {
+// printRemainingChecks names what is left for the reader to do.
+//
+// Only things they can act on. The scoring block height used to be printed too
+// and there is nothing to do with it: no explorer can say whether a height is
+// the right cutoff, and its one checkable property - the distance to the seed
+// block - is now checked here rather than recited.
+//
+// Everything in the file is the report's own claim; that is what a verifier is
+// for. What earns a line is being the reader's cheapest way to test one, and
+// these two are minutes of work against a claim that would otherwise rest on
+// trust: a seed that was chosen rather than taken from a block picks the
+// winners outright, and a file that is not the published one makes the rest of
+// this output describe some other document.
+func printRemainingChecks(parsed *parsedCSV) {
+	h := parsed.header
+
 	switch {
 	case h.seedBlockHeight > 0:
-		fmt.Printf("  scoring ended at block %d\n", h.scoreBlockHeight)
-		fmt.Printf("  seed came from block %d (%s)\n", h.seedBlockHeight, h.seed)
+		fmt.Printf("  seed came from block %d (%s) - check it in a block explorer\n",
+			h.seedBlockHeight, h.seed)
 	case h.settlementBlockHeight > 0:
 		// Version 1 and 2: one block did both jobs.
-		fmt.Printf("  settled at block %d, which also supplied the seed (%s)\n",
+		fmt.Printf("  seed came from block %d (%s) - check it in a block explorer\n",
 			h.settlementBlockHeight, h.seed)
+	default:
+		fmt.Printf("  seed is %s - the report does not say which block it came from\n", h.seed)
 	}
+
+	fmt.Printf("  SHA-256 of this file: %s - compare with the digest beside the download link\n",
+		parsed.sha256)
 }
 
 // lotteryContextFrom turns a parsed report into the lottery's input.

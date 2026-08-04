@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -162,4 +163,103 @@ func TestDigestDistinguishesAFileWithAByteOrderMark(t *testing.T) {
 	if plain.sha256 == withBOM.sha256 {
 		t.Error("two different files reported the same digest")
 	}
+}
+
+// The two settlement heights were printed and never questioned. Their distance
+// is the one thing about them this tool can check without touching a chain, and
+// it is not decoration: fixing the weights six blocks before the seed exists is
+// what stops the miner of the seed block from seeing what their hash would pay
+// out. A report naming a different pair is describing a settlement that did not
+// follow that rule.
+func TestSettlementBlockGapIsChecked(t *testing.T) {
+	body := string(bundledReport(t))
+	if !strings.Contains(body, ",900106,") {
+		t.Fatal("fixture no longer contains the seed block height this test edits")
+	}
+
+	tests := []struct {
+		name       string
+		seedHeight string
+		wantIssue  bool
+	}{
+		{name: "correct gap", seedHeight: "900106", wantIssue: false},
+		{name: "one block short", seedHeight: "900105", wantIssue: true},
+		{name: "one block long", seedHeight: "900107", wantIssue: true},
+		{name: "wildly wrong", seedHeight: "987654", wantIssue: true},
+		{name: "seed before scoring ended", seedHeight: "900094", wantIssue: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			edited := strings.Replace(body, ",900106,", ","+tt.seedHeight+",", 1)
+			parsed, err := loadReport(writeTemp(t, "gap.csv", []byte(edited)))
+			if err != nil {
+				t.Fatalf("loading: %v", err)
+			}
+
+			issues := checkSettlementBlocks(parsed)
+			if tt.wantIssue && len(issues) == 0 {
+				t.Errorf("gap of %d was accepted", parsed.header.seedBlockHeight-parsed.header.scoreBlockHeight)
+			}
+			if !tt.wantIssue && len(issues) != 0 {
+				t.Errorf("correct gap was rejected: %v", issues)
+			}
+		})
+	}
+}
+
+// Version 1 and 2 settle on one block that does both jobs, so there is no
+// distance to check and demanding one would reject every older report.
+func TestSettlementBlockGapIsNotDemandedOfOlderReports(t *testing.T) {
+	parsed, err := loadReport("example-legacy.csv")
+	if err != nil {
+		t.Fatalf("loading: %v", err)
+	}
+	if parsed.header.seedBlockHeight > 0 && parsed.header.scoreBlockHeight > 0 {
+		t.Skip("this fixture now carries two blocks, so it cannot cover the older shape")
+	}
+
+	if issues := checkSettlementBlocks(parsed); len(issues) != 0 {
+		t.Errorf("a report with one settlement block must not be asked for a gap: %v", issues)
+	}
+}
+
+// Both lines earn their place by being something the reader can act on. The
+// scoring block height was neither - no explorer can say whether a height is
+// the right cutoff - and it is checked above rather than recited.
+func TestPassingOutputOnlyNamesActionableChecks(t *testing.T) {
+	parsed, err := loadReport("example-v3.csv")
+	if err != nil {
+		t.Fatalf("loading: %v", err)
+	}
+
+	out := captureStdout(t, func() { printRemainingChecks(parsed) })
+
+	for _, want := range []string{"block explorer", parsed.sha256, "download link"} {
+		if !strings.Contains(out, want) {
+			t.Errorf("output is missing %q:\n%s", want, out)
+		}
+	}
+	if strings.Contains(out, "scoring ended") {
+		t.Errorf("the scoring block is checked, not recited:\n%s", out)
+	}
+}
+
+func captureStdout(t *testing.T, fn func()) string {
+	t.Helper()
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("pipe: %v", err)
+	}
+	saved := os.Stdout
+	os.Stdout = w
+	fn()
+	w.Close()
+	os.Stdout = saved
+
+	var buf strings.Builder
+	if _, err := io.Copy(&buf, r); err != nil {
+		t.Fatalf("reading captured output: %v", err)
+	}
+	return buf.String()
 }
