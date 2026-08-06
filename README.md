@@ -1,6 +1,6 @@
 # Event Verifier
 
-Version: 2.0.0
+Version: 3.0.0
 
 This tool verifies that a payout report CSV matches the official lottery calculation.
 It recomputes the draw from the report's own inputs and compares every winner,
@@ -8,14 +8,31 @@ reward and fee against what the report claims.
 
 ## Which reports this version reads
 
-Version 2.0.0 reads **both** the current reports and every earlier one:
+The version number tracks the newest report format this build reads, so 3.0.0
+reads version 3 and **every earlier format**. Run `--version` to see what you
+have. A report from a newer format is refused rather than read with these
+rules; the failure says so, and the answer is to pull the current build.
 
-- **BTC-Time scoring** — the lottery weight is `holding_score_sat_blocks`, a
-  satoshi x blocks figure that credits how much was held *and for how long*.
-  These reports also carry `settlement_block_height`, and per address an
-  `average_holding_satoshi` and `join_block_height`.
-- **Older reports**, where the weight was `balance_satoshi`: a point-in-time
-  balance snapshot. `example-legacy.csv` is one of these, and still verifies.
+Three formats have been published, and the differences are in what can be
+proven, not only in which columns are present:
+
+- **Version 3** — the settlement block became two. `score_block_height` ends
+  the scoring window and `seed_block_height` supplies the draw, six blocks
+  later; the gap is checked (see below). `example-v3.csv`.
+- **Version 2** — the miner fee rate started coming from the node's own
+  estimator at the moment of planning. That figure cannot be recomputed
+  afterwards, because the mempool it described is gone, so these reports are
+  audited against the policy they declare instead: the rate is at or above the
+  floor stated in the report, both sections agree on it, and the miner fee is
+  no more of the pool than the report says it may take. That is a weaker claim
+  than version 1's arithmetic, and it is the honest one. `example-v2.csv`.
+- **Version 1** — no `schema_version` column at all; its absence is what
+  identifies the format. The fee rate was a constant times a multiplier, both
+  stated in the report, so it is recomputed and proven. Two of these are
+  bundled: `example.csv`, weighted by `holding_score_sat_blocks` (satoshi x
+  blocks, crediting how much was held *and for how long*), and
+  `example-legacy.csv`, weighted by the older `balance_satoshi` point-in-time
+  snapshot. Both still verify.
 
 Columns are matched by **name**, taken from the `type,...` row that precedes
 each section, so a report that gains a column stays verifiable.
@@ -56,6 +73,11 @@ verify-event.exe --report <your-report-file.csv>
 macOS / Linux:
 ```
 ./verify-event --report <your-report-file.csv>
+```
+
+To see which report formats your build reads, without giving it a report:
+```
+./verify-event --version
 ```
 
 ## Output
@@ -118,7 +140,8 @@ macOS / Linux:
 用 Excel 開啟再存檔會加上 BOM，那**不影響驗證**——內容沒有被改動。
 
 Exit status is `0` when verification passes and `1` when it does not, so the
-tool can be used in a script.
+tool can be used in a script. A missing `--report` exits `2`, which keeps
+"you did not give me a file" distinct from "the file did not verify".
 
 **Always add `--verbose` before drawing any conclusion from a failure.** The
 summary above cannot tell the three causes apart; the detail can. In
@@ -137,12 +160,18 @@ verify-event.exe --report <your-report-file.csv> --verbose
 
 ## Checking it against a report you trust
 
-Two sample reports are included, and both should pass:
+One sample report per format is included — the test suite runs all four, and
+so should you:
 
 ```
-./verify-event --report example.csv          # current, BTC-Time scoring
-./verify-event --report example-legacy.csv   # pre-BTC-Time balance snapshot
+./verify-event --report example-v3.csv       # current: split score and seed blocks
+./verify-event --report example-v2.csv       # fee rate from the node's estimator
+./verify-event --report example.csv          # version 1, BTC-Time scoring
+./verify-event --report example-legacy.csv   # version 1, pre-BTC-Time balance snapshot
 ```
 
-If either fails, the build is wrong — stop and report it, rather than
+All four should pass. The older three are the point of the exercise: a tool
+that can only check the most recent payout is not much of a check.
+
+If any of them fails, the build is wrong — stop and report it, rather than
 concluding anything about your own report.
