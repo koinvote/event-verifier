@@ -152,7 +152,12 @@ type parsedCSV struct {
 // event to date is under 40 KB, and this allows four thousand times that.
 const maxReportBytes = 64 << 20
 
-const toolVersion = "2.0.0"
+// toolVersion tracks the newest report format this build reads, which is the
+// only question --version is asked to settle: someone holding a report and a
+// binary needs to know whether the one can check the other. It moves with
+// maxSupportedSchemaVersion above, so 3.0.0 reads version 3 and everything
+// before it.
+const toolVersion = "3.0.0"
 
 func main() {
 	reportPath := flag.String("report", "", "path to payout verification CSV")
