@@ -211,7 +211,8 @@ func main() {
 
 	issues := compareResults(parsed, result)
 	if len(issues) == 0 {
-		fmt.Println("Verification passed. The lottery result matches the report.")
+		fmt.Printf("%s The lottery result matches the report.\n",
+			colourise("Verification passed.", ansiBoldGreen))
 		printRemainingChecks(parsed)
 		return
 	}
@@ -609,8 +610,34 @@ func mustBool(raw string, label string) bool {
 	return value
 }
 
+// Bold rather than plain colour: the verdict has to survive a terminal whose
+// palette has been remapped, and weight carries when hue does not.
+const (
+	ansiBoldGreen = "\033[1;32m"
+	ansiBoldRed   = "\033[1;31m"
+	ansiReset     = "\033[0m"
+)
+
+// colourise wraps text in an escape sequence only when stdout is a terminal.
+//
+// The verdict line is the part of this tool people quote - pasted into a
+// message, piped through grep, redirected to a file kept beside the report.
+// Escape bytes written into any of those turn "Verification passed." into
+// something that reads as corrupted, which is a bad look for a tool whose whole
+// job is telling you whether bytes were tampered with.
+func colourise(text string, colour string) string {
+	info, err := os.Stdout.Stat()
+	if err != nil {
+		return text
+	}
+	if info.Mode()&os.ModeCharDevice == 0 {
+		return text
+	}
+	return colour + text + ansiReset
+}
+
 func printVerificationFailed(reason string) {
-	fmt.Println("Verification failed.")
+	fmt.Println(colourise("Verification failed.", ansiBoldRed))
 	fmt.Println("Possible causes:")
 	fmt.Println("- Report file is incorrect or incomplete")
 	fmt.Println("- Tool version mismatch")
