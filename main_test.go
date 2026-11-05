@@ -18,30 +18,14 @@ import (
 // The older two are the point of this test. A payout is a public record, and a
 // tool that can only check the most recent one is not much of a check.
 func TestBundledReportsVerify(t *testing.T) {
-	for _, path := range []string{"example-v3.csv", "example-v2.csv", "example.csv", "example-legacy.csv"} {
+	for _, path := range []string{"example-v4.csv", "example-v3.csv", "example-v2.csv", "example.csv", "example-legacy.csv"} {
 		t.Run(path, func(t *testing.T) {
 			parsed, err := loadReport(path)
 			if err != nil {
 				t.Fatalf("load: %v", err)
 			}
 
-			result, err := service.NewLotteryService().Compute(service.LotteryContext{
-				Seed:        parsed.header.seed,
-				PoolSatoshi: parsed.header.poolSatoshi,
-				WinnerCount: parsed.header.winnerCount,
-				Balances:    parsed.balances,
-				Params: service.LotteryParams{
-					PlatformFeePercentage: parsed.header.platformFeePercentage,
-					DustThresholdSatoshi:  parsed.header.dustThresholdSatoshi,
-					PayoutFeeMultiplier:   parsed.header.payoutFeeMultiplier,
-					FeeRateSatVb:          parsed.header.feeRateSatVb,
-					FeeRateDecimal:        parsed.header.feeRateDecimal,
-					MinFeeRateSatVb:       parsed.header.minFeeRateSatVb,
-					TxOverheadVBytes:      parsed.header.txOverheadVBytes,
-					InputP2WSHBytes:       parsed.header.inputP2WSHBytes,
-					OutputDefaultVBytes:   parsed.header.outputDefaultVBytes,
-				},
-			})
+			result, err := service.NewLotteryService().Compute(lotteryContextFrom(parsed))
 			if err != nil {
 				t.Fatalf("compute: %v", err)
 			}
@@ -294,4 +278,48 @@ func loadTampered(t *testing.T, edit func(string) (string, bool)) *parsedCSV {
 		t.Fatalf("a tampered file should still parse, so the mismatch is what reports it: %v", err)
 	}
 	return parsed
+}
+
+// Version 4 puts the event summary's size into the fee. Reading it is what
+// makes a version 4 report verify; changing it must make the report fail.
+func TestVersion4CountsTheSummaryInTheFee(t *testing.T) {
+	parsed, err := loadReport("example-v4.csv")
+	if err != nil {
+		t.Fatalf("load: %v", err)
+	}
+	if parsed.header.schemaVersion != 4 || parsed.header.opReturnVBytes <= 0 {
+		t.Fatalf("schema %d op_return_vbytes %d", parsed.header.schemaVersion, parsed.header.opReturnVBytes)
+	}
+
+	parsed.header.opReturnVBytes = 0
+	result, err := service.NewLotteryService().Compute(lotteryContextFrom(parsed))
+	if err != nil {
+		t.Fatalf("compute: %v", err)
+	}
+	if issues := compareResults(parsed, result); len(issues) == 0 {
+		t.Fatal("ignoring the summary's size still verified; the column is not being used")
+	}
+}
+
+func TestVersion4RequiresTheSummaryColumn(t *testing.T) {
+	raw, err := os.ReadFile("example-v4.csv")
+	if err != nil {
+		t.Fatal(err)
+	}
+	lines := strings.SplitN(string(raw), "\n", 3)
+	header := strings.Split(lines[0], ",")
+	values := strings.Split(lines[1], ",")
+	if header[len(header)-1] != "op_return_vbytes" {
+		t.Fatalf("fixture's last header column is %q", header[len(header)-1])
+	}
+	trimmed := strings.Join(header[:len(header)-1], ",") + "\n" +
+		strings.Join(values[:len(values)-1], ",") + "\n" + lines[2]
+
+	path := filepath.Join(t.TempDir(), "v4-missing-column.csv")
+	if err := os.WriteFile(path, []byte(trimmed), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := loadReport(path); err == nil || !strings.Contains(err.Error(), "op_return_vbytes") {
+		t.Fatalf("a version 4 report without op_return_vbytes should be refused by name, got %v", err)
+	}
 }
