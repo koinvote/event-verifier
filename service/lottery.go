@@ -69,6 +69,11 @@ type LotteryParams struct {
 	TxOverheadVBytes    int
 	InputP2WSHBytes     int
 	OutputDefaultVBytes int
+
+	// DataOutputVBytes is the size of the OP_RETURN event summary the payout
+	// transaction carries, from schema version 4. Zero for earlier reports and
+	// for payouts without one, which leaves their fees exactly as before.
+	DataOutputVBytes int
 }
 
 // LotteryResult represents payout calculation results.
@@ -335,6 +340,9 @@ func estimateMinerFee(outputs int, feeRate float64, params LotteryParams) int64 
 	}
 
 	vbytes := overhead + inP2WSH + outDefault*outputs
+	if params.DataOutputVBytes > 0 {
+		vbytes += params.DataOutputVBytes
+	}
 	return int64(math.Ceil(feeRate * float64(vbytes)))
 }
 

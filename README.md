@@ -1,6 +1,6 @@
 # Event Verifier
 
-Version: 3.0.0
+Version: 4.0.0
 
 This tool verifies that a payout report CSV matches the official lottery calculation.
 It recomputes the draw from the report's own inputs and compares every winner,
@@ -8,14 +8,20 @@ reward and fee against what the report claims.
 
 ## Which reports this version reads
 
-The version number tracks the newest report format this build reads, so 3.0.0
-reads version 3 and **every earlier format**. Run `--version` to see what you
+The version number tracks the newest report format this build reads, so 4.0.0
+reads version 4 and **every earlier format**. Run `--version` to see what you
 have. A report from a newer format is refused rather than read with these
 rules; the failure says so, and the answer is to pull the current build.
 
-Three formats have been published, and the differences are in what can be
+Four formats have been published, and the differences are in what can be
 proven, not only in which columns are present:
 
+- **Version 4** — the payout transaction carries a short public summary of
+  the event in an OP_RETURN output, and `op_return_vbytes` states how much
+  space it takes. That space is part of the miner fee, so it is part of the
+  fee this tool recomputes; `0` means the payout carries no summary. The
+  summary's text is not in the report and is not checked here — read it on
+  the payout transaction in any block explorer. `example-v4.csv`.
 - **Version 3** — the settlement block became two. `score_block_height` ends
   the scoring window and `seed_block_height` supplies the draw, six blocks
   later; the gap is checked (see below). `example-v3.csv`.
@@ -160,11 +166,12 @@ verify-event.exe --report <your-report-file.csv> --verbose
 
 ## Checking it against a report you trust
 
-One sample report per format is included — the test suite runs all four, and
+One sample report per format is included — the test suite runs all five, and
 so should you:
 
 ```
-./verify-event --report example-v3.csv       # current: split score and seed blocks
+./verify-event --report example-v4.csv       # current: fee includes the OP_RETURN summary
+./verify-event --report example-v3.csv       # split score and seed blocks
 ./verify-event --report example-v2.csv       # fee rate from the node's estimator
 ./verify-event --report example.csv          # version 1, BTC-Time scoring
 ./verify-event --report example-legacy.csv   # version 1, pre-BTC-Time balance snapshot

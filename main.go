@@ -27,7 +27,11 @@ import (
 // rules would produce a "passed" that means nothing. A tool that cannot tell
 // the difference between "checked and correct" and "did not understand the
 // file" is worse than no tool.
-const maxSupportedSchemaVersion = 3
+//
+// Version 4 adds op_return_vbytes, the size of the event summary the payout
+// transaction carries. It is part of the miner fee, so an older build would
+// recompute a smaller fee and report every new payout as wrong.
+const maxSupportedSchemaVersion = 4
 
 type headerRow struct {
 	// schemaVersion is absent in every report written before the fee model
@@ -63,6 +67,9 @@ type headerRow struct {
 	txOverheadVBytes      int
 	inputP2WSHBytes       int
 	outputDefaultVBytes   int
+	// opReturnVBytes is the space the event summary takes in the payout
+	// transaction, from version 4. Zero before that.
+	opReturnVBytes int
 }
 
 // columns maps a section's column names to their position, taken from the
@@ -155,9 +162,9 @@ const maxReportBytes = 64 << 20
 // toolVersion tracks the newest report format this build reads, which is the
 // only question --version is asked to settle: someone holding a report and a
 // binary needs to know whether the one can check the other. It moves with
-// maxSupportedSchemaVersion above, so 3.0.0 reads version 3 and everything
+// maxSupportedSchemaVersion above, so 4.0.0 reads version 4 and everything
 // before it.
-const toolVersion = "3.0.0"
+const toolVersion = "4.0.0"
 
 func main() {
 	reportPath := flag.String("report", "", "path to payout verification CSV")
@@ -346,6 +353,12 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 			parsed.header.txOverheadVBytes = mustInt(cols.require(record, "header", "tx_overhead_vbytes"), "tx_overhead_vbytes")
 			parsed.header.inputP2WSHBytes = mustInt(cols.require(record, "header", "input_p2wsh_bytes"), "input_p2wsh_bytes")
 			parsed.header.outputDefaultVBytes = mustInt(cols.require(record, "header", "output_default_vbytes"), "output_default_vbytes")
+			// Required, not optional, from version 4: a version 4 report
+			// without it would otherwise verify against a fee that leaves the
+			// summary out.
+			if parsed.header.schemaVersion >= 4 {
+				parsed.header.opReturnVBytes = mustInt(cols.require(record, "header", "op_return_vbytes"), "op_return_vbytes")
+			}
 			parsed.hasHeader = true
 		case "balance":
 			parsed.balances = append(parsed.balances, service.BalanceEntry{
@@ -711,6 +724,7 @@ func lotteryContextFrom(parsed *parsedCSV) service.LotteryContext {
 			TxOverheadVBytes:      parsed.header.txOverheadVBytes,
 			InputP2WSHBytes:       parsed.header.inputP2WSHBytes,
 			OutputDefaultVBytes:   parsed.header.outputDefaultVBytes,
+			DataOutputVBytes:      parsed.header.opReturnVBytes,
 		},
 	}
 }
