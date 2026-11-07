@@ -156,8 +156,8 @@ func TestUnitsConservesThePool(t *testing.T) {
 			t.Fatalf("case %d: platform %d + miner %d + distributable %d != pool %d",
 				i, result.PlatformFeeSatoshi, result.MinerFeeSatoshi, result.DistributableSatoshi, ctx.Public.PoolSatoshi)
 		}
-		if result.ResidualSatoshi < 0 || result.ResidualSatoshi >= result.UnitCount {
-			t.Fatalf("case %d: residual %d is not within [0, K=%d)", i, result.ResidualSatoshi, result.UnitCount)
+		if paid := int64(len(result.PaidRows())); result.ResidualSatoshi < 0 || result.ResidualSatoshi >= paid {
+			t.Fatalf("case %d: residual %d is not under the %d addresses paid", i, result.ResidualSatoshi, paid)
 		}
 	}
 	if checked < 1000 {
@@ -178,12 +178,10 @@ func TestUnitsPaysWithinOneUnitOfEntitlement(t *testing.T) {
 			if diff < 0 {
 				diff = -diff
 			}
-			// The unit is T/K rounded down, so every guaranteed unit is paid
-			// up to a satoshi under its exact value; that is where the
-			// residual comes from, and it bounds the gap at one unit plus
-			// one satoshi per guaranteed unit (plus the residual for the
-			// address that receives it).
-			bound := result.UnitSatoshi + row.UnitsGuaranteed + 2
+			// Both figures are T times a share of K, each rounded down once,
+			// so they differ by under one unit plus the two roundings (plus
+			// the residual for the address that receives it).
+			bound := result.UnitSatoshi + 2
 			if row.Address == result.ResidualAddress {
 				bound += result.ResidualSatoshi
 			}
@@ -208,8 +206,11 @@ func TestUnitsOutputsNeverExceedTheBounds(t *testing.T) {
 		if paid > result.MaxOutputs {
 			t.Fatalf("case %d: %d outputs but the fee was reserved for %d", i, paid, result.MaxOutputs)
 		}
-		if result.MaxOutputs > n || result.MaxOutputs > result.UnitCount || result.UnitCount > ctx.Public.OutputCap && result.UnitCount != ctx.Public.MinUnits {
+		if result.MaxOutputs > n || result.MaxOutputs > result.UnitCount || result.MaxOutputs > ctx.Public.OutputCap {
 			t.Fatalf("case %d: max outputs %d, units %d, participants %d, cap %d", i, result.MaxOutputs, result.UnitCount, n, ctx.Public.OutputCap)
+		}
+		if n > ctx.Public.OutputCap && result.UnitCount > ctx.Public.OutputCap {
+			t.Fatalf("case %d: %d participants but %d units, over the cap", i, n, result.UnitCount)
 		}
 		var extra int64
 		for _, row := range result.Rows {
@@ -408,20 +409,35 @@ func TestUnitsUnitIsAtLeastTheRungWhileTheFeeIsWithinCap(t *testing.T) {
 }
 
 func TestUnitsBigIntMagnitudes(t *testing.T) {
-	// 2000 units times a 5e15 score is 1e19, past int64. Three such holders
-	// must still be paid exactly and in proportion.
+	// (90,000,000 - 10,000,000) / 600 = 133,333 units times a 5e15 score is
+	// 6.7e20, far past int64. Three such holders must still be paid exactly
+	// and in proportion.
 	ctx := unitsTestContext(unitsSeed(1), 100_000_000, unitsAddresses([]int64{5_000_000_000_000_000, 5_000_000_000_000_000, 5_000_000_000_000_000}))
 	result := mustComputeUnits(t, ctx)
-	if result.UnitCount != 2000 {
-		t.Fatalf("expected the 2000 cap, got %d", result.UnitCount)
+	if result.UnitCount != 133_333 {
+		t.Fatalf("expected 133,333 units, got %d", result.UnitCount)
 	}
 	if got := sumUnitsFinal(result); got != result.DistributableSatoshi {
 		t.Fatalf("paid %d of %d", got, result.DistributableSatoshi)
 	}
 	for _, row := range result.Rows {
-		if row.UnitsGuaranteed != 666 {
-			t.Fatalf("each holder should have 666 guaranteed units: %+v", row)
+		if row.UnitsGuaranteed != 44_444 {
+			t.Fatalf("each holder should have 44,444 guaranteed units: %+v", row)
 		}
+	}
+}
+
+func TestUnitsOutputCapBindsOnlyWithMoreParticipantsThanIt(t *testing.T) {
+	// Three participants, a pool that would cut into 13,333 units: the cap
+	// must not touch it. 2,500 participants: the cap must.
+	few := unitsTestContext(unitsSeed(1), 10_000_000, unitsAddresses([]int64{2000, 1000, 500}))
+	if result := mustComputeUnits(t, few); result.UnitCount != 13_333 {
+		t.Fatalf("3 participants: expected 13,333 units, got %d", result.UnitCount)
+	}
+	many := unitsTestContext(unitsSeed(1), 100_000_000, unitsAddresses(repeatScore(2500, 1_000_000)))
+	result := mustComputeUnits(t, many)
+	if result.UnitCount != 2000 || result.MaxOutputs > 2000 {
+		t.Fatalf("2,500 participants: expected 2,000 units and at most 2,000 outputs, got %d units, %d outputs", result.UnitCount, result.MaxOutputs)
 	}
 }
 
@@ -622,7 +638,7 @@ func unitsTrace(name string, ctx UnitsContext, r *UnitsResult) string {
 	}
 	fmt.Fprintf(&b, "platform fee %d, T0 %d, cap fee %d\n", r.PlatformFeeSatoshi, p.PoolSatoshi-r.PlatformFeeSatoshi, p.PoolSatoshi*p.MaxFeePercent/100)
 	fmt.Fprintf(&b, "unit step u %d, K %d, extra units m %d, max outputs %d\n", r.UnitStepSatoshi, r.UnitCount, r.ExtraUnits, r.MaxOutputs)
-	fmt.Fprintf(&b, "miner fee %d, T %d, unit %d, residual %d -> %s\n", r.MinerFeeSatoshi, r.DistributableSatoshi, r.UnitSatoshi, r.ResidualSatoshi, r.ResidualAddress)
+	fmt.Fprintf(&b, "miner fee %d, T %d, one unit = T/K = %d (rounded down), residual %d -> %s\n", r.MinerFeeSatoshi, r.DistributableSatoshi, r.UnitSatoshi, r.ResidualSatoshi, r.ResidualAddress)
 	// The sampling line, rebuilt from the public inputs so the reader can
 	// follow every point to the address it lands in.
 	W, _ := new(big.Int).SetString(r.TotalScore, 10)
@@ -646,8 +662,8 @@ func unitsTrace(name string, ctx UnitsContext, r *UnitsResult) string {
 		fmt.Fprintf(&b, "no remainders to sample\n")
 	}
 	for _, row := range r.Rows {
-		fmt.Fprintf(&b, "  %-4s q %d  extra %d  entitlement %d  paid %d\n",
-			row.Address, row.UnitsGuaranteed, row.UnitsExtra, row.EntitlementSatoshi, row.FinalRewardSatoshi)
+		fmt.Fprintf(&b, "  %-4s q %d  extra %d  entitlement %d  paid T*%d/K = %d\n",
+			row.Address, row.UnitsGuaranteed, row.UnitsExtra, row.EntitlementSatoshi, row.UnitsGuaranteed+row.UnitsExtra, row.FinalRewardSatoshi)
 	}
 	return b.String()
 }

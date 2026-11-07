@@ -26,8 +26,11 @@ import (
 // W along the line awards one extra unit to the address it lands in. An
 // address's chance of the extra unit is exactly its fraction, so its expected
 // payout is exactly its entitlement, and the sampling hands out exactly the
-// units that remain. Outputs never exceed K, so a transaction can always carry
-// them.
+// units that remain. Each address is then paid T * units / K, rounded down
+// once, so the pool is short by less than one satoshi per address paid.
+// Outputs never exceed the participants, and when there are more
+// participants than a transaction can carry, the unit count is capped so
+// that outputs cannot exceed the cap either.
 //
 // Two groups of inputs, and the verifier trusts only the first:
 //
@@ -109,8 +112,10 @@ type UnitsPublicInputs struct {
 	// MinUnits is the fewest units a pool is cut into, however congested the
 	// network.
 	MinUnits int64
-	// OutputCap bounds the number of units, and so of outputs, so the payout
-	// transaction stays within what the network relays.
+	// OutputCap bounds the number of outputs so the payout transaction stays
+	// within what the network relays. Outputs never exceed the participants,
+	// so the cap only bites when there are more participants than it, and
+	// then it bounds the unit count instead.
 	OutputCap int64
 	// FeeBudgetPercent is the share of the net pool the outputs' own fee may
 	// take before the unit is enlarged.
@@ -182,7 +187,9 @@ type UnitsResult struct {
 	DistributableSatoshi int64
 
 	// UnitStepSatoshi is the ladder rung chosen; UnitSatoshi is the value of
-	// one unit after fees, never below the rung while the fee is within cap.
+	// one unit after fees rounded down (T / K), never below the rung while
+	// the fee is within cap. Payouts are T * units / K rounded down per
+	// address, so an address holding one unit receives at least UnitSatoshi.
 	UnitStepSatoshi int64
 	UnitSatoshi     int64
 	// UnitCount is K; ExtraUnits is the number settled by sampling.
@@ -195,8 +202,8 @@ type UnitsResult struct {
 	// strings; DrawOffset is empty when nothing was sampled.
 	TotalScore string
 	DrawOffset string
-	// ResidualSatoshi is what integer division left over and
-	// ResidualAddress who received it.
+	// ResidualSatoshi is what the per-address rounding left over - under one
+	// satoshi per address paid - and ResidualAddress who received it.
 	ResidualSatoshi int64
 	ResidualAddress string
 	// Rows are all participants in address order.
@@ -285,13 +292,14 @@ func ComputeUnits(ctx UnitsContext) (*UnitsResult, error) {
 
 	// 3. The unit count, from public inputs only. It is sized against the
 	// worst fee the cap allows, so that as long as the fee stays within cap
-	// the unit is worth at least the rung.
-	base := (netPool - capFee) / step
-	if base < 0 {
-		base = 0
+	// the unit is worth at least the rung. The output cap bounds it only when
+	// there are more participants than the cap: with fewer, outputs are
+	// bounded by the participants whatever the unit count.
+	unitCount := (netPool - capFee) / step
+	if unitCount < 0 {
+		unitCount = 0
 	}
-	unitCount := base
-	if unitCount > p.OutputCap {
+	if n > p.OutputCap && unitCount > p.OutputCap {
 		unitCount = p.OutputCap
 	}
 	if unitCount < p.MinUnits {
@@ -336,9 +344,9 @@ func ComputeUnits(ctx UnitsContext) (*UnitsResult, error) {
 		return nil, &UnitsFeeError{FeeSatoshi: minerFee, PoolSatoshi: p.PoolSatoshi, LimitPercent: p.MaxFeePercent, Waived: rep.FeeCapWaived}
 	}
 
-	// 5. The unit's value and the integer-division residual.
+	// 5. The unit's value. The smallest payout is one unit rounded down, and
+	// that is what must clear the dust limit.
 	unit := distributable / unitCount
-	residual := distributable - unit*unitCount
 	if unit < UnitsDustLimitSatoshi {
 		return nil, &UnitsDustError{UnitSatoshi: unit, UnitCount: unitCount, DistributableSatoshi: distributable}
 	}
@@ -368,28 +376,34 @@ func ComputeUnits(ctx UnitsContext) (*UnitsResult, error) {
 		}
 	}
 
-	// 7. Payouts, with the residual going to the highest score among those
-	// paid - never to an address that would otherwise receive nothing, since
-	// a residual-only output would be dust.
+	// 7. Payouts: T * units / K rounded down once per address, so the pool
+	// is short by under one satoshi per address paid. That residual goes to
+	// the highest score among those paid - never to an address that would
+	// otherwise receive nothing, since a residual-only output would be dust.
 	rows := make([]UnitsRow, len(participants))
 	residualIndex := -1
 	bigT := big.NewInt(distributable)
+	var paidTotal int64
 	for i, e := range participants {
 		entitlement := new(big.Int).Mul(bigT, big.NewInt(e.Score))
 		entitlement.Quo(entitlement, totalScore)
 		units := guaranteed[i] + extra[i]
+		paid := new(big.Int).Mul(bigT, big.NewInt(units))
+		paid.Quo(paid, bigK)
 		rows[i] = UnitsRow{
 			Address:            e.Address,
 			Score:              e.Score,
 			EntitlementSatoshi: entitlement.Int64(),
 			UnitsGuaranteed:    guaranteed[i],
 			UnitsExtra:         extra[i],
-			FinalRewardSatoshi: units * unit,
+			FinalRewardSatoshi: paid.Int64(),
 		}
+		paidTotal += rows[i].FinalRewardSatoshi
 		if units > 0 && (residualIndex < 0 || e.Score > participants[residualIndex].Score) {
 			residualIndex = i
 		}
 	}
+	residual := distributable - paidTotal
 	residualAddress := ""
 	if residual > 0 && residualIndex >= 0 {
 		rows[residualIndex].FinalRewardSatoshi += residual

@@ -36,54 +36,54 @@
       "miner_fee_satoshi": 389,
       "distributable_satoshi": 89999611,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
-      "extra_units": 3,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
+      "extra_units": 2,
       "max_outputs": 5,
       "total_score": "831600000000",
       "draw_offset": "724430912972",
-      "residual_satoshi": 1611,
+      "residual_satoshi": 1,
       "residual_address": "bc1q0000",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 302400000000,
           "entitlement_satoshi": 32727131,
-          "units_guaranteed": 727,
+          "units_guaranteed": 48484,
           "units_extra": 0,
-          "final_reward_satoshi": 32715884
+          "final_reward_satoshi": 32726641
         },
         {
           "address": "bc1q0001",
           "score": 201600000000,
           "entitlement_satoshi": 21818087,
-          "units_guaranteed": 484,
+          "units_guaranteed": 32323,
           "units_extra": 1,
-          "final_reward_satoshi": 21824515
+          "final_reward_satoshi": 21818660
         },
         {
           "address": "bc1q0002",
           "score": 151200000000,
           "entitlement_satoshi": 16363565,
-          "units_guaranteed": 363,
+          "units_guaranteed": 24242,
           "units_extra": 0,
-          "final_reward_satoshi": 16334637
+          "final_reward_satoshi": 16363320
         },
         {
           "address": "bc1q0003",
           "score": 100800000000,
           "entitlement_satoshi": 10909043,
-          "units_guaranteed": 242,
-          "units_extra": 1,
-          "final_reward_satoshi": 10934757
+          "units_guaranteed": 16161,
+          "units_extra": 0,
+          "final_reward_satoshi": 10908655
         },
         {
           "address": "bc1q0004",
           "score": 75600000000,
           "entitlement_satoshi": 8181782,
-          "units_guaranteed": 181,
+          "units_guaranteed": 12121,
           "units_extra": 1,
-          "final_reward_satoshi": 8189818
+          "final_reward_satoshi": 8182335
         }
       ]
     }
@@ -131,78 +131,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "985",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 1,
-          "final_reward_satoshi": 10034777
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "units_guaranteed": 16049,
+          "units_extra": 1,
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "units_guaranteed": 17283,
+          "units_extra": 0,
+          "final_reward_satoshi": 11665988
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 0,
-          "final_reward_satoshi": 12464723
+          "units_guaranteed": 18518,
+          "units_extra": 1,
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -254,94 +254,94 @@
       "miner_fee_satoshi": 591,
       "distributable_satoshi": 89999409,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
-      "extra_units": 0,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
+      "extra_units": 3,
       "max_outputs": 10,
       "total_score": "10000",
-      "draw_offset": "",
-      "residual_satoshi": 1409,
+      "draw_offset": "1935",
+      "residual_satoshi": 4,
       "residual_address": "bc1q0000",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 1000,
           "entitlement_satoshi": 8999940,
-          "units_guaranteed": 200,
-          "units_extra": 0,
-          "final_reward_satoshi": 9001209
+          "units_guaranteed": 13333,
+          "units_extra": 1,
+          "final_reward_satoshi": 9000417
         },
         {
           "address": "bc1q0001",
           "score": 1000,
           "entitlement_satoshi": 8999940,
-          "units_guaranteed": 200,
+          "units_guaranteed": 13333,
           "units_extra": 0,
-          "final_reward_satoshi": 8999800
+          "final_reward_satoshi": 8999738
         },
         {
           "address": "bc1q0002",
           "score": 1000,
           "entitlement_satoshi": 8999940,
-          "units_guaranteed": 200,
+          "units_guaranteed": 13333,
           "units_extra": 0,
-          "final_reward_satoshi": 8999800
+          "final_reward_satoshi": 8999738
         },
         {
           "address": "bc1q0003",
           "score": 1000,
           "entitlement_satoshi": 8999940,
-          "units_guaranteed": 200,
-          "units_extra": 0,
-          "final_reward_satoshi": 8999800
+          "units_guaranteed": 13333,
+          "units_extra": 1,
+          "final_reward_satoshi": 9000413
         },
         {
           "address": "bc1q0004",
           "score": 1000,
           "entitlement_satoshi": 8999940,
-          "units_guaranteed": 200,
+          "units_guaranteed": 13333,
           "units_extra": 0,
-          "final_reward_satoshi": 8999800
+          "final_reward_satoshi": 8999738
         },
         {
           "address": "bc1q0005",
           "score": 1000,
           "entitlement_satoshi": 8999940,
-          "units_guaranteed": 200,
+          "units_guaranteed": 13333,
           "units_extra": 0,
-          "final_reward_satoshi": 8999800
+          "final_reward_satoshi": 8999738
         },
         {
           "address": "bc1q0006",
           "score": 1000,
           "entitlement_satoshi": 8999940,
-          "units_guaranteed": 200,
+          "units_guaranteed": 13333,
           "units_extra": 0,
-          "final_reward_satoshi": 8999800
+          "final_reward_satoshi": 8999738
         },
         {
           "address": "bc1q0007",
           "score": 1000,
           "entitlement_satoshi": 8999940,
-          "units_guaranteed": 200,
-          "units_extra": 0,
-          "final_reward_satoshi": 8999800
+          "units_guaranteed": 13333,
+          "units_extra": 1,
+          "final_reward_satoshi": 9000413
         },
         {
           "address": "bc1q0008",
           "score": 1000,
           "entitlement_satoshi": 8999940,
-          "units_guaranteed": 200,
+          "units_guaranteed": 13333,
           "units_extra": 0,
-          "final_reward_satoshi": 8999800
+          "final_reward_satoshi": 8999738
         },
         {
           "address": "bc1q0009",
           "score": 1000,
           "entitlement_satoshi": 8999940,
-          "units_guaranteed": 200,
+          "units_guaranteed": 13333,
           "units_extra": 0,
-          "final_reward_satoshi": 8999800
+          "final_reward_satoshi": 8999738
         }
       ]
     }
@@ -384,73 +384,73 @@
     "fee_cap_waived": false,
     "expected": {
       "platform_fee_satoshi": 10000000,
-      "miner_fee_satoshi": 308,
-      "distributable_satoshi": 89999692,
+      "miner_fee_satoshi": 470,
+      "distributable_satoshi": 89999530,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 2,
-      "max_outputs": 3,
+      "max_outputs": 7,
       "total_score": "999999996",
       "draw_offset": "154981419",
-      "residual_satoshi": 1692,
+      "residual_satoshi": 6,
       "residual_address": "bc1q0000",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 999000000,
-          "entitlement_satoshi": 89909692,
-          "units_guaranteed": 1998,
-          "units_extra": 0,
-          "final_reward_satoshi": 89909694
+          "entitlement_satoshi": 89909530,
+          "units_guaranteed": 133199,
+          "units_extra": 1,
+          "final_reward_satoshi": 89909761
         },
         {
           "address": "bc1q0001",
           "score": 166666,
           "entitlement_satoshi": 14999,
-          "units_guaranteed": 0,
-          "units_extra": 1,
-          "final_reward_satoshi": 44999
+          "units_guaranteed": 22,
+          "units_extra": 0,
+          "final_reward_satoshi": 14849
         },
         {
           "address": "bc1q0002",
           "score": 166666,
           "entitlement_satoshi": 14999,
-          "units_guaranteed": 0,
+          "units_guaranteed": 22,
           "units_extra": 0,
-          "final_reward_satoshi": 0
+          "final_reward_satoshi": 14849
         },
         {
           "address": "bc1q0003",
           "score": 166666,
           "entitlement_satoshi": 14999,
-          "units_guaranteed": 0,
-          "units_extra": 0,
-          "final_reward_satoshi": 0
+          "units_guaranteed": 22,
+          "units_extra": 1,
+          "final_reward_satoshi": 15524
         },
         {
           "address": "bc1q0004",
           "score": 166666,
           "entitlement_satoshi": 14999,
-          "units_guaranteed": 0,
-          "units_extra": 1,
-          "final_reward_satoshi": 44999
+          "units_guaranteed": 22,
+          "units_extra": 0,
+          "final_reward_satoshi": 14849
         },
         {
           "address": "bc1q0005",
           "score": 166666,
           "entitlement_satoshi": 14999,
-          "units_guaranteed": 0,
+          "units_guaranteed": 22,
           "units_extra": 0,
-          "final_reward_satoshi": 0
+          "final_reward_satoshi": 14849
         },
         {
           "address": "bc1q0006",
           "score": 166666,
           "entitlement_satoshi": 14999,
-          "units_guaranteed": 0,
+          "units_guaranteed": 22,
           "units_extra": 0,
-          "final_reward_satoshi": 0
+          "final_reward_satoshi": 14849
         }
       ]
     }
@@ -498,20 +498,20 @@
       "miner_fee_satoshi": 267,
       "distributable_satoshi": 89999733,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 1,
       "max_outputs": 2,
       "total_score": "500000028",
       "draw_offset": "28797428",
-      "residual_satoshi": 1733,
-      "residual_address": "bc1q0000",
+      "residual_satoshi": 0,
+      "residual_address": "",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 500000000,
           "entitlement_satoshi": 89999727,
-          "units_guaranteed": 1999,
+          "units_guaranteed": 133332,
           "units_extra": 1,
           "final_reward_satoshi": 89999733
         },
@@ -609,46 +609,46 @@
       "miner_fee_satoshi": 348,
       "distributable_satoshi": 89999652,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
-      "extra_units": 1,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
+      "extra_units": 3,
       "max_outputs": 4,
       "total_score": "509040000000",
       "draw_offset": "378019475346",
-      "residual_satoshi": 1652,
+      "residual_satoshi": 3,
       "residual_address": "bc1q0000",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 302400000000,
           "entitlement_satoshi": 53465139,
-          "units_guaranteed": 1188,
+          "units_guaranteed": 79207,
           "units_extra": 0,
-          "final_reward_satoshi": 53460464
+          "final_reward_satoshi": 53464654
         },
         {
           "address": "bc1q0001",
           "score": 100800000000,
           "entitlement_satoshi": 17821713,
-          "units_guaranteed": 396,
-          "units_extra": 0,
-          "final_reward_satoshi": 17819604
+          "units_guaranteed": 26402,
+          "units_extra": 1,
+          "final_reward_satoshi": 17822000
         },
         {
           "address": "bc1q0002",
           "score": 75600000000,
           "entitlement_satoshi": 13366284,
-          "units_guaranteed": 297,
-          "units_extra": 0,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19801,
+          "units_extra": 1,
+          "final_reward_satoshi": 13366331
         },
         {
           "address": "bc1q0003",
           "score": 30240000000,
           "entitlement_satoshi": 5346513,
-          "units_guaranteed": 118,
+          "units_guaranteed": 7920,
           "units_extra": 1,
-          "final_reward_satoshi": 5354881
+          "final_reward_satoshi": 5346667
         }
       ]
     }
@@ -682,20 +682,20 @@
       "miner_fee_satoshi": 227,
       "distributable_satoshi": 89999773,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 0,
       "max_outputs": 1,
       "total_score": "9",
       "draw_offset": "",
-      "residual_satoshi": 1773,
-      "residual_address": "bc1q0000",
+      "residual_satoshi": 0,
+      "residual_address": "",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 9,
           "entitlement_satoshi": 89999773,
-          "units_guaranteed": 2000,
+          "units_guaranteed": 133333,
           "units_extra": 0,
           "final_reward_satoshi": 89999773
         }
@@ -735,38 +735,38 @@
       "miner_fee_satoshi": 308,
       "distributable_satoshi": 8999692,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 4499,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 13333,
       "extra_units": 2,
       "max_outputs": 3,
       "total_score": "3500",
       "draw_offset": "497",
-      "residual_satoshi": 1692,
+      "residual_satoshi": 1,
       "residual_address": "bc1q0000",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 2000,
           "entitlement_satoshi": 5142681,
-          "units_guaranteed": 1142,
+          "units_guaranteed": 7618,
           "units_extra": 1,
-          "final_reward_satoshi": 5144049
+          "final_reward_satoshi": 5142778
         },
         {
           "address": "bc1q0001",
           "score": 1000,
           "entitlement_satoshi": 2571340,
-          "units_guaranteed": 571,
+          "units_guaranteed": 3809,
           "units_extra": 1,
-          "final_reward_satoshi": 2573428
+          "final_reward_satoshi": 2571726
         },
         {
           "address": "bc1q0002",
           "score": 500,
           "entitlement_satoshi": 1285670,
-          "units_guaranteed": 285,
+          "units_guaranteed": 1904,
           "units_extra": 0,
-          "final_reward_satoshi": 1282215
+          "final_reward_satoshi": 1285188
         }
       ]
     }
@@ -812,7 +812,7 @@
       "max_outputs": 4,
       "total_score": "3570",
       "draw_offset": "2855",
-      "residual_satoshi": 36,
+      "residual_satoshi": 2,
       "residual_address": "bc1q0000",
       "rows": [
         {
@@ -821,7 +821,7 @@
           "entitlement_satoshi": 19973,
           "units_guaranteed": 29,
           "units_extra": 0,
-          "final_reward_satoshi": 19524
+          "final_reward_satoshi": 19509
         },
         {
           "address": "bc1q0001",
@@ -829,7 +829,7 @@
           "entitlement_satoshi": 9986,
           "units_guaranteed": 14,
           "units_extra": 1,
-          "final_reward_satoshi": 10080
+          "final_reward_satoshi": 10090
         },
         {
           "address": "bc1q0002",
@@ -845,7 +845,7 @@
           "entitlement_satoshi": 4993,
           "units_guaranteed": 7,
           "units_extra": 1,
-          "final_reward_satoshi": 5376
+          "final_reward_satoshi": 5381
         }
       ]
     }
@@ -1922,38 +1922,38 @@
       "miner_fee_satoshi": 308,
       "distributable_satoshi": 89999692,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
-      "extra_units": 2,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
+      "extra_units": 1,
       "max_outputs": 3,
       "total_score": "15000000000000000",
       "draw_offset": "6432149351536617",
-      "residual_satoshi": 1692,
+      "residual_satoshi": 1,
       "residual_address": "bc1q0000",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 5000000000000000,
           "entitlement_satoshi": 29999897,
-          "units_guaranteed": 666,
-          "units_extra": 1,
-          "final_reward_satoshi": 30016025
+          "units_guaranteed": 44444,
+          "units_extra": 0,
+          "final_reward_satoshi": 29999673
         },
         {
           "address": "bc1q0001",
           "score": 5000000000000000,
           "entitlement_satoshi": 29999897,
-          "units_guaranteed": 666,
-          "units_extra": 0,
-          "final_reward_satoshi": 29969334
+          "units_guaranteed": 44444,
+          "units_extra": 1,
+          "final_reward_satoshi": 30000347
         },
         {
           "address": "bc1q0002",
           "score": 5000000000000000,
           "entitlement_satoshi": 29999897,
-          "units_guaranteed": 666,
-          "units_extra": 1,
-          "final_reward_satoshi": 30014333
+          "units_guaranteed": 44444,
+          "units_extra": 0,
+          "final_reward_satoshi": 29999672
         }
       ]
     }
@@ -2741,7 +2741,7 @@
       "max_outputs": 6,
       "total_score": "42",
       "draw_offset": "17",
-      "residual_satoshi": 84,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0000",
       "rows": [
         {
@@ -2750,7 +2750,7 @@
           "entitlement_satoshi": 29761,
           "units_guaranteed": 44,
           "units_extra": 0,
-          "final_reward_satoshi": 29608
+          "final_reward_satoshi": 29541
         },
         {
           "address": "bc1q0001",
@@ -2758,7 +2758,7 @@
           "entitlement_satoshi": 29761,
           "units_guaranteed": 44,
           "units_extra": 1,
-          "final_reward_satoshi": 30195
+          "final_reward_satoshi": 30209
         },
         {
           "address": "bc1q0002",
@@ -2766,7 +2766,7 @@
           "entitlement_satoshi": 29761,
           "units_guaranteed": 44,
           "units_extra": 0,
-          "final_reward_satoshi": 29524
+          "final_reward_satoshi": 29537
         },
         {
           "address": "bc1q0003",
@@ -2774,7 +2774,7 @@
           "entitlement_satoshi": 29761,
           "units_guaranteed": 44,
           "units_extra": 0,
-          "final_reward_satoshi": 29524
+          "final_reward_satoshi": 29537
         },
         {
           "address": "bc1q0004",
@@ -2782,7 +2782,7 @@
           "entitlement_satoshi": 29761,
           "units_guaranteed": 44,
           "units_extra": 1,
-          "final_reward_satoshi": 30195
+          "final_reward_satoshi": 30209
         },
         {
           "address": "bc1q0005",
@@ -2790,7 +2790,7 @@
           "entitlement_satoshi": 29761,
           "units_guaranteed": 44,
           "units_extra": 0,
-          "final_reward_satoshi": 29524
+          "final_reward_satoshi": 29537
         }
       ]
     }
@@ -2838,78 +2838,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "340",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
+          "units_guaranteed": 18518,
           "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
-          "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "units_guaranteed": 20987,
+          "units_extra": 0,
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -2957,78 +2957,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "224",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
+          "units_guaranteed": 18518,
           "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
-          "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "units_guaranteed": 20987,
+          "units_extra": 0,
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -3076,78 +3076,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "844",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "final_reward_satoshi": 9167145
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "final_reward_satoshi": 9999418
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -3195,78 +3195,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "230",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
+          "units_guaranteed": 18518,
           "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
-          "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "units_guaranteed": 20987,
+          "units_extra": 0,
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -3314,78 +3314,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "824",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "final_reward_satoshi": 9167145
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "final_reward_satoshi": 9999418
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -3433,78 +3433,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "664",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -3552,78 +3552,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "72",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 1,
-          "final_reward_satoshi": 8369814
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 1,
-          "final_reward_satoshi": 10034777
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
+          "units_guaranteed": 17283,
           "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 0,
-          "final_reward_satoshi": 12464723
+          "units_guaranteed": 18518,
+          "units_extra": 1,
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 0,
-          "final_reward_satoshi": 14131176
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -3671,78 +3671,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "19",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 1,
-          "final_reward_satoshi": 8369814
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 1,
-          "final_reward_satoshi": 10034777
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
+          "units_guaranteed": 17283,
           "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 0,
-          "final_reward_satoshi": 12464723
+          "units_guaranteed": 18518,
+          "units_extra": 1,
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 0,
-          "final_reward_satoshi": 14131176
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -3790,78 +3790,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "419",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "units_guaranteed": 19753,
+          "units_extra": 1,
+          "final_reward_satoshi": 13333907
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
-          "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "units_guaranteed": 20987,
+          "units_extra": 0,
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -3909,78 +3909,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "683",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -4028,78 +4028,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "66",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 1,
-          "final_reward_satoshi": 8369814
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 1,
-          "final_reward_satoshi": 10034777
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
+          "units_guaranteed": 17283,
           "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 0,
-          "final_reward_satoshi": 12464723
+          "units_guaranteed": 18518,
+          "units_extra": 1,
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 0,
-          "final_reward_satoshi": 14131176
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -4147,78 +4147,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "334",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
+          "units_guaranteed": 18518,
           "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
-          "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "units_guaranteed": 20987,
+          "units_extra": 0,
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -4266,78 +4266,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "263",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
+          "units_guaranteed": 18518,
           "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
-          "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "units_guaranteed": 20987,
+          "units_extra": 0,
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -4385,78 +4385,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "122",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 1,
-          "final_reward_satoshi": 8369814
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
+          "units_guaranteed": 18518,
           "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 0,
-          "final_reward_satoshi": 14131176
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -4504,78 +4504,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "489",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -4623,78 +4623,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "493",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -4742,78 +4742,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "455",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -4861,78 +4861,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "569",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -4980,78 +4980,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "927",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "final_reward_satoshi": 9167145
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "final_reward_satoshi": 9999418
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "units_guaranteed": 16049,
+          "units_extra": 1,
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
+          "units_guaranteed": 17283,
           "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -5099,78 +5099,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "361",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
+          "units_guaranteed": 18518,
           "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
-          "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "units_guaranteed": 20987,
+          "units_extra": 0,
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -5218,78 +5218,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "971",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 1,
-          "final_reward_satoshi": 10034777
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "units_guaranteed": 16049,
+          "units_extra": 1,
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "units_guaranteed": 17283,
+          "units_extra": 0,
+          "final_reward_satoshi": 11665988
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 0,
-          "final_reward_satoshi": 12464723
+          "units_guaranteed": 18518,
+          "units_extra": 1,
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -5337,78 +5337,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "732",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "final_reward_satoshi": 9167145
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "final_reward_satoshi": 9999418
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -5456,78 +5456,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "332",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
+          "units_guaranteed": 18518,
           "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
-          "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "units_guaranteed": 20987,
+          "units_extra": 0,
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -5575,78 +5575,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "337",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
+          "units_guaranteed": 18518,
           "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
-          "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "units_guaranteed": 20987,
+          "units_extra": 0,
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -5694,78 +5694,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "511",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -5813,78 +5813,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "785",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "final_reward_satoshi": 9167145
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "final_reward_satoshi": 9999418
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -5932,78 +5932,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "558",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -6051,78 +6051,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "989",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 1,
-          "final_reward_satoshi": 10034777
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "units_guaranteed": 16049,
+          "units_extra": 1,
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "units_guaranteed": 17283,
+          "units_extra": 0,
+          "final_reward_satoshi": 11665988
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 0,
-          "final_reward_satoshi": 12464723
+          "units_guaranteed": 18518,
+          "units_extra": 1,
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -6170,78 +6170,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "598",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -6289,78 +6289,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "675",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -6408,78 +6408,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "758",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "final_reward_satoshi": 9167145
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "final_reward_satoshi": 9999418
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -6527,78 +6527,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "415",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "units_guaranteed": 19753,
+          "units_extra": 1,
+          "final_reward_satoshi": 13333907
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
-          "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "units_guaranteed": 20987,
+          "units_extra": 0,
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -6646,78 +6646,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "744",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "final_reward_satoshi": 9167145
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "final_reward_satoshi": 9999418
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -6765,78 +6765,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "1038",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 1,
-          "final_reward_satoshi": 10034777
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "units_guaranteed": 16049,
+          "units_extra": 1,
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "units_guaranteed": 17283,
+          "units_extra": 0,
+          "final_reward_satoshi": 11665988
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 0,
-          "final_reward_satoshi": 12464723
+          "units_guaranteed": 18518,
+          "units_extra": 1,
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -6884,78 +6884,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "874",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "final_reward_satoshi": 9167145
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "final_reward_satoshi": 9999418
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -7003,78 +7003,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "1049",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 1,
-          "final_reward_satoshi": 10034777
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "units_guaranteed": 16049,
+          "units_extra": 1,
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "units_guaranteed": 17283,
+          "units_extra": 0,
+          "final_reward_satoshi": 11665988
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 0,
-          "final_reward_satoshi": 12464723
+          "units_guaranteed": 18518,
+          "units_extra": 1,
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -7122,78 +7122,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "52",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 1,
-          "final_reward_satoshi": 8369814
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 1,
-          "final_reward_satoshi": 10034777
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
+          "units_guaranteed": 17283,
           "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 0,
-          "final_reward_satoshi": 12464723
+          "units_guaranteed": 18518,
+          "units_extra": 1,
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 0,
-          "final_reward_satoshi": 14131176
+          "final_reward_satoshi": 14166184
         }
       ]
     }
@@ -7241,78 +7241,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "449",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
-          "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "units_guaranteed": 12345,
+          "units_extra": 1,
+          "final_reward_satoshi": 8333523
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
-          "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "units_guaranteed": 13580,
+          "units_extra": 0,
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
-          "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "units_guaranteed": 14814,
+          "units_extra": 1,
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "units_guaranteed": 16049,
+          "units_extra": 0,
+          "final_reward_satoshi": 10833040
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -7360,78 +7360,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "979",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 0,
-          "final_reward_satoshi": 9134797
+          "final_reward_satoshi": 9166470
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 1,
-          "final_reward_satoshi": 10034777
+          "final_reward_satoshi": 10000093
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
-          "units_extra": 0,
-          "final_reward_satoshi": 10799760
+          "units_guaranteed": 16049,
+          "units_extra": 1,
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 1,
-          "final_reward_satoshi": 11699740
+          "units_guaranteed": 17283,
+          "units_extra": 0,
+          "final_reward_satoshi": 11665988
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 0,
-          "final_reward_satoshi": 12464723
+          "units_guaranteed": 18518,
+          "units_extra": 1,
+          "final_reward_satoshi": 12500285
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
-          "units_extra": 1,
-          "final_reward_satoshi": 13364703
+          "units_guaranteed": 19753,
+          "units_extra": 0,
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
@@ -7479,78 +7479,78 @@
       "miner_fee_satoshi": 510,
       "distributable_satoshi": 89999490,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 44999,
-      "unit_count": 2000,
+      "unit_satoshi": 674,
+      "unit_count": 133333,
       "extra_units": 4,
       "max_outputs": 8,
       "total_score": "1080",
       "draw_offset": "821",
-      "residual_satoshi": 1490,
+      "residual_satoshi": 4,
       "residual_address": "bc1q0007",
       "rows": [
         {
           "address": "bc1q0000",
           "score": 100,
           "entitlement_satoshi": 8333286,
-          "units_guaranteed": 185,
+          "units_guaranteed": 12345,
           "units_extra": 0,
-          "final_reward_satoshi": 8324815
+          "final_reward_satoshi": 8332848
         },
         {
           "address": "bc1q0001",
           "score": 110,
           "entitlement_satoshi": 9166614,
-          "units_guaranteed": 203,
+          "units_guaranteed": 13580,
           "units_extra": 1,
-          "final_reward_satoshi": 9179796
+          "final_reward_satoshi": 9167145
         },
         {
           "address": "bc1q0002",
           "score": 120,
           "entitlement_satoshi": 9999943,
-          "units_guaranteed": 222,
+          "units_guaranteed": 14814,
           "units_extra": 0,
-          "final_reward_satoshi": 9989778
+          "final_reward_satoshi": 9999418
         },
         {
           "address": "bc1q0003",
           "score": 130,
           "entitlement_satoshi": 10833271,
-          "units_guaranteed": 240,
+          "units_guaranteed": 16049,
           "units_extra": 1,
-          "final_reward_satoshi": 10844759
+          "final_reward_satoshi": 10833715
         },
         {
           "address": "bc1q0004",
           "score": 140,
           "entitlement_satoshi": 11666600,
-          "units_guaranteed": 259,
-          "units_extra": 0,
-          "final_reward_satoshi": 11654741
+          "units_guaranteed": 17283,
+          "units_extra": 1,
+          "final_reward_satoshi": 11666663
         },
         {
           "address": "bc1q0005",
           "score": 150,
           "entitlement_satoshi": 12499929,
-          "units_guaranteed": 277,
-          "units_extra": 1,
-          "final_reward_satoshi": 12509722
+          "units_guaranteed": 18518,
+          "units_extra": 0,
+          "final_reward_satoshi": 12499610
         },
         {
           "address": "bc1q0006",
           "score": 160,
           "entitlement_satoshi": 13333257,
-          "units_guaranteed": 296,
+          "units_guaranteed": 19753,
           "units_extra": 0,
-          "final_reward_satoshi": 13319704
+          "final_reward_satoshi": 13333232
         },
         {
           "address": "bc1q0007",
           "score": 170,
           "entitlement_satoshi": 14166586,
-          "units_guaranteed": 314,
+          "units_guaranteed": 20987,
           "units_extra": 1,
-          "final_reward_satoshi": 14176175
+          "final_reward_satoshi": 14166859
         }
       ]
     }
