@@ -18,19 +18,19 @@ import (
 // The older two are the point of this test. A payout is a public record, and a
 // tool that can only check the most recent one is not much of a check.
 func TestBundledReportsVerify(t *testing.T) {
-	for _, path := range []string{"example-v4.csv", "example-v3.csv", "example-v2.csv", "example.csv", "example-legacy.csv"} {
+	for _, path := range []string{"example-v5.csv", "example-v4.csv", "example-v3.csv", "example-v2.csv", "example.csv", "example-legacy.csv"} {
 		t.Run(path, func(t *testing.T) {
 			parsed, err := loadReport(path)
 			if err != nil {
 				t.Fatalf("load: %v", err)
 			}
 
-			result, err := service.NewLotteryService().Compute(lotteryContextFrom(parsed))
+			issues, err := verifyReport(parsed)
 			if err != nil {
 				t.Fatalf("compute: %v", err)
 			}
 
-			if issues := compareResults(parsed, result); len(issues) != 0 {
+			if len(issues) != 0 {
 				for _, issue := range issues {
 					t.Errorf("unexpected mismatch: %s", issue)
 				}
