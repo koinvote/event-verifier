@@ -1,6 +1,6 @@
 # Event Verifier
 
-Version: 4.0.0
+Version: 5.0.0
 
 This tool verifies that a payout report CSV matches the official lottery calculation.
 It recomputes the draw from the report's own inputs and compares every winner,
@@ -8,14 +8,30 @@ reward and fee against what the report claims.
 
 ## Which reports this version reads
 
-The version number tracks the newest report format this build reads, so 4.0.0
-reads version 4 and **every earlier format**. Run `--version` to see what you
+The version number tracks the newest report format this build reads, so 5.0.0
+reads version 5 and **every earlier format**. Run `--version` to see what you
 have. A report from a newer format is refused rather than read with these
 rules; the failure says so, and the answer is to pull the current build.
 
-Four formats have been published, and the differences are in what can be
+Five formats have been published, and the differences are in what can be
 proven, not only in which columns are present:
 
+- **Version 5** — the draw is gone. A report whose `distribution_algorithm`
+  is `units_v2` pays every participating address its share of the holding
+  score: the net pool is cut into `unit_count` units, the whole units of each
+  address's share are paid outright (`units_guaranteed`), and the fractions
+  are settled by one offset drawn from the seed (`draw_offset`), so each
+  address's expected payout is exactly its share. Every input the allocation
+  is recomputed from is in the header - the unit ladder (`unit_floor_satoshi`,
+  `min_units`, `output_cap`, `fee_budget_percentage`) and the seed block's
+  median fee rate (`seed_block_median_fee_rate_sat_vb`, checkable with
+  `bitcoin-cli getblockstats <seed block> '["feerate_percentiles"]'`). The
+  rate the platform paid (`fee_rate_milli_sat_vb`) only sets the unit's value
+  in satoshi; it is held to the floor and to the fee cap, and when the cap is
+  waived after a 72-hour wait (`fee_cap_waived`), the wait is checked against
+  the seed block's and payout block's times. Every participant has a
+  `result_winner` row. `example-v5.csv` is generated from the allocation
+  itself, and its seed matters: substitute it and the report fails.
 - **Version 4** — the payout transaction carries a short public summary of
   the event in an OP_RETURN output, and `op_return_vbytes` states how much
   space it takes. That space is part of the miner fee, so it is part of the
@@ -166,18 +182,19 @@ verify-event.exe --report <your-report-file.csv> --verbose
 
 ## Checking it against a report you trust
 
-One sample report per format is included — the test suite runs all five, and
+One sample report per format is included — the test suite runs all six, and
 so should you:
 
 ```
-./verify-event --report example-v4.csv       # current: fee includes the OP_RETURN summary
+./verify-event --report example-v5.csv       # current: proportional units, no draw
+./verify-event --report example-v4.csv       # fee includes the OP_RETURN summary
 ./verify-event --report example-v3.csv       # split score and seed blocks
 ./verify-event --report example-v2.csv       # fee rate from the node's estimator
 ./verify-event --report example.csv          # version 1, BTC-Time scoring
 ./verify-event --report example-legacy.csv   # version 1, pre-BTC-Time balance snapshot
 ```
 
-All four should pass. The older three are the point of the exercise: a tool
+All six should pass. The older five are the point of the exercise: a tool
 that can only check the most recent payout is not much of a check.
 
 If any of them fails, the build is wrong — stop and report it, rather than

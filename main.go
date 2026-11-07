@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"sort"
 	"strconv"
@@ -31,7 +32,14 @@ import (
 // Version 4 adds op_return_vbytes, the size of the event summary the payout
 // transaction carries. It is part of the miner fee, so an older build would
 // recompute a smaller fee and report every new payout as wrong.
-const maxSupportedSchemaVersion = 4
+//
+// Version 5 replaces the draw. A report that names distribution_algorithm
+// units_v2 pays every address its share of the score in whole units and
+// settles the fractions by one sampled offset (service/lottery_units.go);
+// the header carries the unit ladder inputs, the seed block's median fee
+// rate, the waiver flag and the block times a waived payout is held to. An
+// older build would replay the lottery over a report that never ran one.
+const maxSupportedSchemaVersion = 5
 
 type headerRow struct {
 	// schemaVersion is absent in every report written before the fee model
@@ -70,6 +78,37 @@ type headerRow struct {
 	// opReturnVBytes is the space the event summary takes in the payout
 	// transaction, from version 4. Zero before that.
 	opReturnVBytes int
+
+	// Version 5: the units_v2 allocation. distributionAlgorithm names the
+	// code path; the rest are its inputs and the figures it claims, split as
+	// service/lottery_units.go splits them - public inputs this tool
+	// recomputes from, and the platform's own statements it holds to policy.
+	distributionAlgorithm       string
+	feeRateMilliSatVb           int64
+	waivedMaxFeePercentage      float64
+	feeCapWaived                bool
+	opReturnVariant             string
+	unitFloorSatoshi            int64
+	minUnits                    int64
+	outputCap                   int64
+	feeBudgetPercentage         float64
+	seedBlockMedianFeeRateSatVb int64
+	ladderRateSource            string
+	unitStepSatoshi             int64
+	unitSatoshi                 int64
+	unitCount                   int64
+	extraUnits                  int64
+	maxOutputs                  int64
+	drawOffset                  string
+	residualSatoshi             int64
+	residualAddress             string
+	// seedBlockMTP is the seed block's median time past; payoutBlockHeight
+	// and payoutBlockMTP name the block the payout transaction confirmed in,
+	// filled in after confirmation. Together they let a waived fee cap be
+	// checked against the 72-hour wait it requires, offline.
+	seedBlockMTP      int64
+	payoutBlockHeight int64
+	payoutBlockMTP    int64
 }
 
 // columns maps a section's column names to their position, taken from the
@@ -130,6 +169,11 @@ type resultWinner struct {
 	originalRewardSatoshi int64
 	finalRewardSatoshi    int64
 	isDust                bool
+	// Version 5 columns. Under units_v2 every participant has a row, and
+	// these say what it was owed and how many units it received.
+	entitlementSatoshi int64
+	unitsGuaranteed    int64
+	unitsExtra         int64
 }
 
 type parsedCSV struct {
@@ -162,9 +206,9 @@ const maxReportBytes = 64 << 20
 // toolVersion tracks the newest report format this build reads, which is the
 // only question --version is asked to settle: someone holding a report and a
 // binary needs to know whether the one can check the other. It moves with
-// maxSupportedSchemaVersion above, so 4.0.0 reads version 4 and everything
+// maxSupportedSchemaVersion above, so 5.0.0 reads version 5 and everything
 // before it.
-const toolVersion = "4.0.0"
+const toolVersion = "5.0.0"
 
 func main() {
 	reportPath := flag.String("report", "", "path to payout verification CSV")
@@ -204,19 +248,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	ctx := lotteryContextFrom(parsed)
-
-	lottery := service.NewLotteryService()
-	result, err := lottery.Compute(ctx)
+	issues, err := verifyReport(parsed)
 	if err != nil {
 		printVerificationFailed("input parameters are incorrect")
 		if *verbose {
-			fmt.Printf("Failed to compute lottery result: %s\n", err)
+			fmt.Printf("Failed to compute the payout: %s\n", err)
 		}
 		os.Exit(1)
 	}
 
-	issues := compareResults(parsed, result)
 	if len(issues) == 0 {
 		fmt.Printf("%s The lottery result matches the report.\n",
 			colourise("Verification passed.", ansiBoldGreen))
@@ -359,6 +399,41 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 			if parsed.header.schemaVersion >= 4 {
 				parsed.header.opReturnVBytes = mustInt(cols.require(record, "header", "op_return_vbytes"), "op_return_vbytes")
 			}
+			// Version 5 names its allocation and, for units_v2, every input the
+			// allocation is recomputed from. All required: a version 5 report
+			// missing one would otherwise be replayed with a default the
+			// backend never used.
+			if parsed.header.schemaVersion >= 5 {
+				h := &parsed.header
+				h.distributionAlgorithm = cols.require(record, "header", "distribution_algorithm")
+				if h.distributionAlgorithm == service.UnitsAlgorithmID {
+					h.feeRateMilliSatVb = mustInt64(cols.require(record, "header", "fee_rate_milli_sat_vb"), "fee_rate_milli_sat_vb")
+					h.waivedMaxFeePercentage = mustFloat(cols.require(record, "header", "waived_max_fee_percentage"), "waived_max_fee_percentage")
+					h.feeCapWaived = mustBool(cols.require(record, "header", "fee_cap_waived"), "fee_cap_waived")
+					h.opReturnVariant, _ = cols.lookup(record, "op_return_variant")
+					h.unitFloorSatoshi = mustInt64(cols.require(record, "header", "unit_floor_satoshi"), "unit_floor_satoshi")
+					h.minUnits = mustInt64(cols.require(record, "header", "min_units"), "min_units")
+					h.outputCap = mustInt64(cols.require(record, "header", "output_cap"), "output_cap")
+					h.feeBudgetPercentage = mustFloat(cols.require(record, "header", "fee_budget_percentage"), "fee_budget_percentage")
+					h.seedBlockMedianFeeRateSatVb = mustInt64(cols.require(record, "header", "seed_block_median_fee_rate_sat_vb"), "seed_block_median_fee_rate_sat_vb")
+					h.ladderRateSource = cols.require(record, "header", "ladder_rate_source")
+					h.unitStepSatoshi = mustInt64(cols.require(record, "header", "unit_step_satoshi"), "unit_step_satoshi")
+					h.unitSatoshi = mustInt64(cols.require(record, "header", "unit_satoshi"), "unit_satoshi")
+					h.unitCount = mustInt64(cols.require(record, "header", "unit_count"), "unit_count")
+					h.extraUnits = mustInt64(cols.require(record, "header", "extra_units"), "extra_units")
+					h.maxOutputs = mustInt64(cols.require(record, "header", "max_outputs"), "max_outputs")
+					h.drawOffset = cols.require(record, "header", "draw_offset")
+					h.residualSatoshi = mustInt64(cols.require(record, "header", "residual_satoshi"), "residual_satoshi")
+					h.residualAddress = cols.require(record, "header", "residual_address")
+					h.seedBlockMTP = mustInt64(cols.require(record, "header", "seed_block_mtp"), "seed_block_mtp")
+					if raw, ok := cols.lookup(record, "payout_block_height"); ok && raw != "" {
+						h.payoutBlockHeight = mustInt64(raw, "payout_block_height")
+					}
+					if raw, ok := cols.lookup(record, "payout_block_mtp"); ok && raw != "" {
+						h.payoutBlockMTP = mustInt64(raw, "payout_block_mtp")
+					}
+				}
+			}
 			parsed.hasHeader = true
 		case "balance":
 			parsed.balances = append(parsed.balances, service.BalanceEntry{
@@ -372,13 +447,19 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 			parsed.summary.feeRateSatVb = mustFloat(cols.require(record, "result_summary", "fee_rate_sat_vb"), "fee_rate_sat_vb")
 			parsed.hasResult = true
 		case "result_winner":
-			parsed.winners = append(parsed.winners, resultWinner{
+			winner := resultWinner{
 				address:               cols.require(record, "result_winner", "address"),
 				weight:                mustInt64(cols.require(record, "result_winner", "holding_score_sat_blocks", "balance_satoshi"), "holding_score_sat_blocks"),
 				originalRewardSatoshi: mustInt64(cols.require(record, "result_winner", "original_reward_satoshi"), "original_reward_satoshi"),
 				finalRewardSatoshi:    mustInt64(cols.require(record, "result_winner", "final_reward_satoshi"), "final_reward_satoshi"),
 				isDust:                mustBool(cols.require(record, "result_winner", "is_dust"), "is_dust"),
-			})
+			}
+			if parsed.header.distributionAlgorithm == service.UnitsAlgorithmID {
+				winner.entitlementSatoshi = mustInt64(cols.require(record, "result_winner", "entitlement_satoshi"), "entitlement_satoshi")
+				winner.unitsGuaranteed = mustInt64(cols.require(record, "result_winner", "units_guaranteed"), "units_guaranteed")
+				winner.unitsExtra = mustInt64(cols.require(record, "result_winner", "units_extra"), "units_extra")
+			}
+			parsed.winners = append(parsed.winners, winner)
 
 		default:
 			// Anything appended to a valid report used to land here and be
@@ -415,6 +496,13 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 	}
 	if !parsed.hasResult {
 		return nil, fmt.Errorf("missing result_summary row")
+	}
+	switch parsed.header.distributionAlgorithm {
+	case "", "lottery_v1", service.UnitsAlgorithmID:
+	default:
+		return nil, fmt.Errorf("report names distribution_algorithm %q, which this build does not know; "+
+			"download the current verifier from https://github.com/koinvote/event-verifier",
+			parsed.header.distributionAlgorithm)
 	}
 	if len(parsed.balances) == 0 {
 		return nil, fmt.Errorf("missing balance rows")
@@ -507,7 +595,9 @@ func checkFeePolicy(parsed *parsedCSV) []string {
 		issues = append(issues, fmt.Sprintf("unknown fee_rate_source %q", parsed.header.feeRateSource))
 	}
 
-	if parsed.header.maxFeePercentage > 0 && parsed.header.poolSatoshi > 0 {
+	// Under units_v2 the cap depends on whether the waiting period has passed,
+	// so it is checked in checkUnitsPolicy instead.
+	if parsed.header.distributionAlgorithm != service.UnitsAlgorithmID && parsed.header.maxFeePercentage > 0 && parsed.header.poolSatoshi > 0 {
 		cap := float64(parsed.header.poolSatoshi) * parsed.header.maxFeePercentage / 100
 		if float64(parsed.summary.estimatedMinerFeeSatoshi) > cap {
 			issues = append(issues, fmt.Sprintf(
@@ -698,8 +788,198 @@ func printRemainingChecks(parsed *parsedCSV) {
 		fmt.Printf("  seed is %s - the report does not say which block it came from\n", h.seed)
 	}
 
+	if h.distributionAlgorithm == service.UnitsAlgorithmID {
+		fmt.Printf("  the unit ladder used a seed-block median fee rate of %d sat/vB - check it with:\n"+
+			"    bitcoin-cli getblockstats %s '[\"feerate_percentiles\"]'   (the third value)\n",
+			h.seedBlockMedianFeeRateSatVb, h.seed)
+		if h.ladderRateSource == service.UnitsLadderRateNodeEstimate {
+			fmt.Println("  note: the report says the seed block's rate could not be fetched and the node's estimate sized the ladder instead")
+		}
+		switch {
+		case h.feeCapWaived && h.payoutBlockMTP > 0:
+			fmt.Printf("  the fee cap was waived after a 72-hour wait: seed block %d (mtp %d) to payout block %d (mtp %d) - check both blocks in a block explorer\n",
+				h.seedBlockHeight, h.seedBlockMTP, h.payoutBlockHeight, h.payoutBlockMTP)
+		case h.feeCapWaived:
+			fmt.Println("  the fee cap was waived, but the payout block is not in this report yet, so the 72-hour wait cannot be checked until it is")
+		}
+	}
+
 	fmt.Printf("  SHA-256 of this file: %s - compare with the digest beside the download link\n",
 		parsed.sha256)
+}
+
+// verifyReport recomputes the payout the way the report says it was made and
+// returns every disagreement. One dispatcher for main and the tests, so both
+// replay exactly the computation the report names.
+func verifyReport(parsed *parsedCSV) ([]string, error) {
+	if parsed.header.distributionAlgorithm == service.UnitsAlgorithmID {
+		result, err := service.ComputeUnits(unitsContextFrom(parsed))
+		if err != nil {
+			return nil, err
+		}
+		return compareUnitsResults(parsed, result), nil
+	}
+	result, err := service.NewLotteryService().Compute(lotteryContextFrom(parsed))
+	if err != nil {
+		return nil, err
+	}
+	return compareResults(parsed, result), nil
+}
+
+// waivedPayoutWaitSeconds is how long a payout must have waited before the
+// higher fee cap applies: 72 hours, measured between the seed block's median
+// time past and the payout block's.
+const waivedPayoutWaitSeconds = 72 * 60 * 60
+
+// unitsContextFrom turns a version 5 report into the allocation's input. The
+// public inputs come from the header verbatim; the platform's statements are
+// carried alongside for the policy checks.
+func unitsContextFrom(parsed *parsedCSV) service.UnitsContext {
+	h := parsed.header
+	return service.UnitsContext{
+		Public: service.UnitsPublicInputs{
+			Seed:             h.seed,
+			PoolSatoshi:      h.poolSatoshi,
+			PlatformFeeBps:   int64(math.Round(h.platformFeePercentage * 100)),
+			UnitFloorSatoshi: h.unitFloorSatoshi,
+			MinUnits:         h.minUnits,
+			OutputCap:        h.outputCap,
+			// The report states percentages with up to two decimals; the
+			// allocation takes basis points, so 7.5 becomes 750 exactly.
+			FeeBudgetBps:                int64(math.Round(h.feeBudgetPercentage * 100)),
+			MaxFeeBps:                   int64(math.Round(h.maxFeePercentage * 100)),
+			WaivedMaxFeeBps:             int64(math.Round(h.waivedMaxFeePercentage * 100)),
+			TxOverheadVBytes:            int64(h.txOverheadVBytes),
+			InputVBytes:                 int64(h.inputP2WSHBytes),
+			OutputVBytes:                int64(h.outputDefaultVBytes),
+			OpReturnVBytes:              int64(h.opReturnVBytes),
+			SeedBlockMedianFeeRateSatVb: h.seedBlockMedianFeeRateSatVb,
+			Balances:                    parsed.balances,
+		},
+		Reported: service.UnitsPlatformReported{
+			FeeRateMilliSatPerVb: h.feeRateMilliSatVb,
+			FeeRateSource:        h.feeRateSource,
+			FeeCapWaived:         h.feeCapWaived,
+			LadderRateSource:     h.ladderRateSource,
+			OpReturnVariant:      h.opReturnVariant,
+		},
+	}
+}
+
+// checkUnitsPolicy holds the platform's statements in a version 5 report to
+// the rules it published. The allocation itself is recomputed from public
+// inputs in compareUnitsResults; this is about what the platform chose.
+func checkUnitsPolicy(parsed *parsedCSV) []string {
+	h := parsed.header
+	issues := make([]string, 0)
+
+	// The decimal rate and the exact milli-satoshi rate must be the same
+	// figure; the allocation is priced from the exact one.
+	if math.Round(h.feeRateDecimal*1000) != float64(h.feeRateMilliSatVb) {
+		issues = append(issues, fmt.Sprintf("fee_rate_sat_vb %v and fee_rate_milli_sat_vb %d disagree", h.feeRateDecimal, h.feeRateMilliSatVb))
+	}
+
+	switch h.ladderRateSource {
+	case service.UnitsLadderRateSeedBlock, service.UnitsLadderRateNodeEstimate:
+	default:
+		issues = append(issues, fmt.Sprintf("unknown ladder_rate_source %q", h.ladderRateSource))
+	}
+
+	if h.poolSatoshi > 0 {
+		limit := h.maxFeePercentage
+		if h.feeCapWaived {
+			limit = h.waivedMaxFeePercentage
+		}
+		if limit > 0 {
+			cap := float64(h.poolSatoshi) * limit / 100
+			if float64(parsed.summary.estimatedMinerFeeSatoshi) > cap {
+				issues = append(issues, fmt.Sprintf(
+					"miner fee %d sats is %.2f%% of the pool, over the %.2f%% cap that applies (waived=%t)",
+					parsed.summary.estimatedMinerFeeSatoshi,
+					float64(parsed.summary.estimatedMinerFeeSatoshi)/float64(h.poolSatoshi)*100,
+					limit, h.feeCapWaived))
+			}
+		}
+	}
+
+	// A waived cap is only legitimate after the wait. Both block times are on
+	// the chain, so this is the one part of "we waited" that can be checked
+	// offline - once the payout block is known.
+	if h.feeCapWaived && h.payoutBlockMTP > 0 {
+		if h.seedBlockMTP <= 0 {
+			issues = append(issues, "fee cap waived but the report has no seed_block_mtp to measure the wait from")
+		} else if h.seedBlockMTP+waivedPayoutWaitSeconds > h.payoutBlockMTP {
+			issues = append(issues, fmt.Sprintf(
+				"fee cap waived but the payout block's time (%d) is only %d seconds after the seed block's (%d); %d required",
+				h.payoutBlockMTP, h.payoutBlockMTP-h.seedBlockMTP, h.seedBlockMTP, waivedPayoutWaitSeconds))
+		}
+	}
+
+	if h.unitSatoshi < service.UnitsDustLimitSatoshi {
+		issues = append(issues, fmt.Sprintf("unit of %d sats is below the %d sat dust limit; such a payout must not have been made",
+			h.unitSatoshi, service.UnitsDustLimitSatoshi))
+	}
+
+	return issues
+}
+
+func compareUnitsResults(parsed *parsedCSV, result *service.UnitsResult) []string {
+	issues := make([]string, 0)
+	h := parsed.header
+
+	check := func(name string, reported, computed int64) {
+		if reported != computed {
+			issues = append(issues, fmt.Sprintf("%s mismatch: report=%d computed=%d", name, reported, computed))
+		}
+	}
+	check("platform_fee_satoshi", parsed.summary.platformFeeSatoshi, result.PlatformFeeSatoshi)
+	check("estimated_miner_fee_satoshi", parsed.summary.estimatedMinerFeeSatoshi, result.MinerFeeSatoshi)
+	check("distributable_satoshi", parsed.summary.distributableSatoshi, result.DistributableSatoshi)
+	if parsed.summary.feeRateSatVb != h.feeRateDecimal {
+		issues = append(issues, fmt.Sprintf("fee rate disagrees between sections: header=%v result_summary=%v", h.feeRateDecimal, parsed.summary.feeRateSatVb))
+	}
+	check("unit_step_satoshi", h.unitStepSatoshi, result.UnitStepSatoshi)
+	check("unit_satoshi", h.unitSatoshi, result.UnitSatoshi)
+	check("unit_count", h.unitCount, result.UnitCount)
+	check("extra_units", h.extraUnits, result.ExtraUnits)
+	check("max_outputs", h.maxOutputs, result.MaxOutputs)
+	check("residual_satoshi", h.residualSatoshi, result.ResidualSatoshi)
+	if h.drawOffset != result.DrawOffset {
+		issues = append(issues, fmt.Sprintf("draw_offset mismatch: report=%q computed=%q", h.drawOffset, result.DrawOffset))
+	}
+	if h.residualAddress != result.ResidualAddress {
+		issues = append(issues, fmt.Sprintf("residual_address mismatch: report=%q computed=%q", h.residualAddress, result.ResidualAddress))
+	}
+
+	issues = append(issues, checkFeePolicy(parsed)...)
+	issues = append(issues, checkUnitsPolicy(parsed)...)
+	issues = append(issues, checkSettlementBlocks(parsed)...)
+
+	computed := make(map[string]service.UnitsRow, len(result.Rows))
+	for _, row := range result.Rows {
+		computed[row.Address] = row
+	}
+	if len(parsed.winners) != len(computed) {
+		issues = append(issues, fmt.Sprintf("participant row count mismatch: report=%d computed=%d", len(parsed.winners), len(computed)))
+	}
+	for _, winner := range parsed.winners {
+		row, ok := computed[winner.address]
+		if !ok {
+			issues = append(issues, fmt.Sprintf("row for %s is not among the computed participants", winner.address))
+			continue
+		}
+		check("holding score for "+winner.address, winner.weight, row.Score)
+		check("entitlement_satoshi for "+winner.address, winner.entitlementSatoshi, row.EntitlementSatoshi)
+		check("units_guaranteed for "+winner.address, winner.unitsGuaranteed, row.UnitsGuaranteed)
+		check("units_extra for "+winner.address, winner.unitsExtra, row.UnitsExtra)
+		check("final_reward_satoshi for "+winner.address, winner.finalRewardSatoshi, row.FinalRewardSatoshi)
+		if winner.originalRewardSatoshi != winner.finalRewardSatoshi || winner.isDust {
+			issues = append(issues, fmt.Sprintf("%s: units_v2 pays no dust and has no redistribution, but the row says original=%d final=%d is_dust=%t",
+				winner.address, winner.originalRewardSatoshi, winner.finalRewardSatoshi, winner.isDust))
+		}
+	}
+
+	return issues
 }
 
 // lotteryContextFrom turns a parsed report into the lottery's input.
