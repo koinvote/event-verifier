@@ -38,9 +38,9 @@ func exampleV5Context() service.UnitsContext {
 			UnitFloorSatoshi:            600,
 			MinUnits:                    8,
 			OutputCap:                   2000,
-			FeeBudgetPercent:            5,
-			MaxFeePercent:               10,
-			WaivedMaxFeePercent:         25,
+			FeeBudgetBps:                500,
+			MaxFeeBps:                   1000,
+			WaivedMaxFeeBps:             2500,
 			TxOverheadVBytes:            12,
 			InputVBytes:                 110,
 			OutputVBytes:                34,
@@ -72,14 +72,14 @@ func renderExampleV5(ctx service.UnitsContext, result *service.UnitsResult) stri
 		"distribution_algorithm,unit_floor_satoshi,min_units,output_cap,fee_budget_percentage,seed_block_median_fee_rate_sat_vb,ladder_rate_source," +
 		"unit_step_satoshi,unit_satoshi,unit_count,extra_units,max_outputs,draw_offset,residual_satoshi,residual_address\n")
 	fmt.Fprintf(&b, "header,5,01KEXAMPLEV5UNITSALLOCATION,b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef01,%s,900100,0000000000000000000456def0011223344556677889900aabbccddeeff001122,900106,1794000000,900112,1794003600,"+
-		"%d,0,%s,%d,%s,%d,%s,6,1,%d,%d,%t,%d,%d,%d,%d,%s,"+
-		"%s,%d,%d,%d,%d,%d,%s,"+
+		"%d,0,%s,%d,%s,%d,%s,6,1,%s,%s,%t,%d,%d,%d,%d,%s,"+
+		"%s,%d,%d,%d,%s,%d,%s,"+
 		"%d,%d,%d,%d,%d,%s,%d,%s\n",
 		p.Seed,
 		p.PoolSatoshi, strconv.FormatFloat(float64(p.PlatformFeeBps)/100, 'f', -1, 64), p.UnitFloorSatoshi,
 		strconv.FormatFloat(float64(rep.FeeRateMilliSatPerVb)/1000, 'f', -1, 64), rep.FeeRateMilliSatPerVb, rep.FeeRateSource,
-		p.MaxFeePercent, p.WaivedMaxFeePercent, rep.FeeCapWaived, p.TxOverheadVBytes, p.InputVBytes, p.OutputVBytes, p.OpReturnVBytes, rep.OpReturnVariant,
-		service.UnitsAlgorithmID, p.UnitFloorSatoshi, p.MinUnits, p.OutputCap, p.FeeBudgetPercent, p.SeedBlockMedianFeeRateSatVb, rep.LadderRateSource,
+		pct(p.MaxFeeBps), pct(p.WaivedMaxFeeBps), rep.FeeCapWaived, p.TxOverheadVBytes, p.InputVBytes, p.OutputVBytes, p.OpReturnVBytes, rep.OpReturnVariant,
+		service.UnitsAlgorithmID, p.UnitFloorSatoshi, p.MinUnits, p.OutputCap, pct(p.FeeBudgetBps), p.SeedBlockMedianFeeRateSatVb, rep.LadderRateSource,
 		result.UnitStepSatoshi, result.UnitSatoshi, result.UnitCount, result.ExtraUnits, result.MaxOutputs, result.DrawOffset, result.ResidualSatoshi, result.ResidualAddress)
 
 	b.WriteString("type,address,referral_code,holding_score_sat_blocks,average_holding_satoshi,join_block_height\n")
@@ -97,6 +97,12 @@ func renderExampleV5(ctx service.UnitsContext, result *service.UnitsResult) stri
 			row.Address, row.Score, row.EntitlementSatoshi, row.UnitsGuaranteed, row.UnitsExtra, row.FinalRewardSatoshi, row.FinalRewardSatoshi)
 	}
 	return b.String()
+}
+
+// pct renders basis points as the percentage the report carries: 1000 is
+// "10", 750 is "7.5".
+func pct(bps int64) string {
+	return strconv.FormatFloat(float64(bps)/100, 'f', -1, 64)
 }
 
 func TestWriteExampleV5(t *testing.T) {

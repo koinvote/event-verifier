@@ -112,14 +112,15 @@ type UnitsPublicInputs struct {
 	// so the cap only bites when there are more participants than it, and
 	// then it bounds the unit count instead.
 	OutputCap int64
-	// FeeBudgetPercent is the share of the net pool the outputs' own fee may
-	// take before the unit is enlarged.
-	FeeBudgetPercent int64
-	// MaxFeePercent is the miner-fee cap as a share of the pool while the
-	// payout is on time.
-	MaxFeePercent int64
-	// WaivedMaxFeePercent is the cap once the waiting period has passed.
-	WaivedMaxFeePercent int64
+	// FeeBudgetBps is the share of the net pool the outputs' own fee may take
+	// before the unit is enlarged, in basis points (500 = 5%).
+	FeeBudgetBps int64
+	// MaxFeeBps is the miner-fee cap as a share of the pool while the payout
+	// is on time, in basis points (1000 = 10%).
+	MaxFeeBps int64
+	// WaivedMaxFeeBps is the cap once the waiting period has passed, in
+	// basis points (2500 = 25%).
+	WaivedMaxFeeBps int64
 	// Transaction sizing, in vbytes.
 	TxOverheadVBytes int64
 	InputVBytes      int64
@@ -219,19 +220,19 @@ func (r *UnitsResult) PaidRows() []UnitsRow {
 // UnitsFeeError says the miner fee is over the cap that applies, or has
 // swallowed the pool. It is a reason to come back later, not a failure.
 type UnitsFeeError struct {
-	FeeSatoshi   int64
-	PoolSatoshi  int64
-	LimitPercent int64
-	Waived       bool
+	FeeSatoshi  int64
+	PoolSatoshi int64
+	LimitBps    int64
+	Waived      bool
 }
 
 func (e *UnitsFeeError) Error() string {
 	if e.PoolSatoshi <= 0 {
 		return fmt.Sprintf("miner fee %d sats with no pool to pay it from", e.FeeSatoshi)
 	}
-	return fmt.Sprintf("miner fee %d sats is %d.%02d%% of the %d sat pool, over the %d%% cap (waived=%t)",
+	return fmt.Sprintf("miner fee %d sats is %d.%02d%% of the %d sat pool, over the %d.%02d%% cap (waived=%t)",
 		e.FeeSatoshi, e.FeeSatoshi*100/e.PoolSatoshi, (e.FeeSatoshi*10000/e.PoolSatoshi)%100,
-		e.PoolSatoshi, e.LimitPercent, e.Waived)
+		e.PoolSatoshi, e.LimitBps/100, e.LimitBps%100, e.Waived)
 }
 
 // UnitsDustError says the fee has pushed the unit below what a node will
@@ -286,9 +287,9 @@ func ComputeUnits(ctx UnitsContext) (*UnitsResult, error) {
 	}
 	netPool := p.PoolSatoshi - platformFee // T0
 	if netPool <= 0 {
-		return nil, &UnitsFeeError{FeeSatoshi: 0, PoolSatoshi: p.PoolSatoshi, LimitPercent: p.MaxFeePercent}
+		return nil, &UnitsFeeError{FeeSatoshi: 0, PoolSatoshi: p.PoolSatoshi, LimitBps: p.MaxFeeBps}
 	}
-	capFee := p.PoolSatoshi * p.MaxFeePercent / 100
+	capFee := p.PoolSatoshi * p.MaxFeeBps / 10000
 
 	// 2. The unit rung, from the seed block's fee rate.
 	step := chooseUnitStep(netPool, n, p)
@@ -337,14 +338,14 @@ func ComputeUnits(ctx UnitsContext) (*UnitsResult, error) {
 	// dividing.
 	minerFee := unitsMinerFee(maxOutputs+platformOutputs, p, rep)
 	if !rep.FeeCapWaived && minerFee > capFee {
-		return nil, &UnitsFeeError{FeeSatoshi: minerFee, PoolSatoshi: p.PoolSatoshi, LimitPercent: p.MaxFeePercent}
+		return nil, &UnitsFeeError{FeeSatoshi: minerFee, PoolSatoshi: p.PoolSatoshi, LimitBps: p.MaxFeeBps}
 	}
-	if rep.FeeCapWaived && minerFee > p.PoolSatoshi*p.WaivedMaxFeePercent/100 {
-		return nil, &UnitsFeeError{FeeSatoshi: minerFee, PoolSatoshi: p.PoolSatoshi, LimitPercent: p.WaivedMaxFeePercent, Waived: true}
+	if rep.FeeCapWaived && minerFee > p.PoolSatoshi*p.WaivedMaxFeeBps/10000 {
+		return nil, &UnitsFeeError{FeeSatoshi: minerFee, PoolSatoshi: p.PoolSatoshi, LimitBps: p.WaivedMaxFeeBps, Waived: true}
 	}
 	distributable := netPool - minerFee
 	if distributable <= 0 {
-		return nil, &UnitsFeeError{FeeSatoshi: minerFee, PoolSatoshi: p.PoolSatoshi, LimitPercent: p.MaxFeePercent, Waived: rep.FeeCapWaived}
+		return nil, &UnitsFeeError{FeeSatoshi: minerFee, PoolSatoshi: p.PoolSatoshi, LimitBps: p.MaxFeeBps, Waived: rep.FeeCapWaived}
 	}
 
 	// 5. The unit's value. The smallest payout is one unit rounded down, and
@@ -448,7 +449,7 @@ func chooseUnitStep(netPool int64, participants int64, p UnitsPublicInputs) int6
 			outputs = p.OutputCap
 		}
 		feeOfOutputs := outputs * p.OutputVBytes * p.SeedBlockMedianFeeRateSatVb
-		if feeOfOutputs*100 <= netPool*p.FeeBudgetPercent || netPool/step <= 1 {
+		if feeOfOutputs*10000 <= netPool*p.FeeBudgetBps || netPool/step <= 1 {
 			return step
 		}
 	}
@@ -499,12 +500,12 @@ func validateUnitsInputs(p UnitsPublicInputs, rep UnitsPlatformReported) error {
 		return errors.New("output cap must be >= min units")
 	case p.OutputCap > unitsMaxOutputCap:
 		return fmt.Errorf("output cap must be at most %d", unitsMaxOutputCap)
-	case p.FeeBudgetPercent < 0:
-		return errors.New("fee budget must be >= 0")
-	case p.MaxFeePercent <= 0 || p.MaxFeePercent > 100:
-		return errors.New("max fee percent must be within (0, 100]")
-	case p.WaivedMaxFeePercent < p.MaxFeePercent || p.WaivedMaxFeePercent > 100:
-		return errors.New("waived max fee percent must be within [max fee percent, 100]")
+	case p.FeeBudgetBps < 0:
+		return errors.New("fee budget must be >= 0 bps")
+	case p.MaxFeeBps <= 0 || p.MaxFeeBps > 10000:
+		return errors.New("max fee must be within (0, 10000] bps")
+	case p.WaivedMaxFeeBps < p.MaxFeeBps || p.WaivedMaxFeeBps > 10000:
+		return errors.New("waived max fee must be within [max fee, 10000] bps")
 	case p.TxOverheadVBytes < 0 || p.InputVBytes < 0 || p.OutputVBytes <= 0 || p.OpReturnVBytes < 0:
 		return errors.New("transaction sizes must be non-negative and output size positive")
 	case p.SeedBlockMedianFeeRateSatVb < 0:

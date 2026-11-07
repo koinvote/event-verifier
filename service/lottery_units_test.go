@@ -23,9 +23,9 @@ func unitsTestContext(seed string, pool int64, balances []BalanceEntry) UnitsCon
 			UnitFloorSatoshi:            600,
 			MinUnits:                    8,
 			OutputCap:                   2000,
-			FeeBudgetPercent:            5,
-			MaxFeePercent:               10,
-			WaivedMaxFeePercent:         25,
+			FeeBudgetBps:                500,
+			MaxFeeBps:                   1000,
+			WaivedMaxFeeBps:             2500,
 			TxOverheadVBytes:            12,
 			InputVBytes:                 110,
 			OutputVBytes:                34,
@@ -457,7 +457,7 @@ func TestUnitsFeePolicy(t *testing.T) {
 	over := base
 	over.Reported.FeeRateMilliSatPerVb = 12_000
 	var feeErr *UnitsFeeError
-	if _, err := ComputeUnits(over); !errors.As(err, &feeErr) || feeErr.Waived || feeErr.LimitPercent != 10 {
+	if _, err := ComputeUnits(over); !errors.As(err, &feeErr) || feeErr.Waived || feeErr.LimitBps != 1000 {
 		t.Fatalf("12 sat/vB should exceed the 10%% cap, got %v", err)
 	}
 
@@ -469,7 +469,7 @@ func TestUnitsFeePolicy(t *testing.T) {
 
 	farOver := waived
 	farOver.Reported.FeeRateMilliSatPerVb = 30_000
-	if _, err := ComputeUnits(farOver); !errors.As(err, &feeErr) || !feeErr.Waived || feeErr.LimitPercent != 25 {
+	if _, err := ComputeUnits(farOver); !errors.As(err, &feeErr) || !feeErr.Waived || feeErr.LimitBps != 2500 {
 		t.Fatalf("30 sat/vB should exceed the 25%% waived cap, got %v", err)
 	}
 }
@@ -501,8 +501,8 @@ func TestUnitsRejectsBadInputs(t *testing.T) {
 		"cap under min units": func(c *UnitsContext) { c.Public.OutputCap = 7 },
 		"absurd floor":        func(c *UnitsContext) { c.Public.UnitFloorSatoshi = 1 << 50 },
 		"absurd cap":          func(c *UnitsContext) { c.Public.OutputCap = 10_000_000 },
-		"max fee 0":           func(c *UnitsContext) { c.Public.MaxFeePercent = 0 },
-		"waived cap below":    func(c *UnitsContext) { c.Public.WaivedMaxFeePercent = 5 },
+		"max fee 0":           func(c *UnitsContext) { c.Public.MaxFeeBps = 0 },
+		"waived cap below":    func(c *UnitsContext) { c.Public.WaivedMaxFeeBps = 500 },
 		"zero output vbytes":  func(c *UnitsContext) { c.Public.OutputVBytes = 0 },
 		"zero paid rate":      func(c *UnitsContext) { c.Reported.FeeRateMilliSatPerVb = 0 },
 	}
@@ -644,7 +644,7 @@ func unitsTrace(name string, ctx UnitsContext, r *UnitsResult) string {
 	for _, row := range r.Rows {
 		fmt.Fprintf(&b, "  %-4s score %d\n", row.Address, row.Score)
 	}
-	fmt.Fprintf(&b, "platform fee %d, T0 %d, cap fee %d\n", r.PlatformFeeSatoshi, p.PoolSatoshi-r.PlatformFeeSatoshi, p.PoolSatoshi*p.MaxFeePercent/100)
+	fmt.Fprintf(&b, "platform fee %d, T0 %d, cap fee %d\n", r.PlatformFeeSatoshi, p.PoolSatoshi-r.PlatformFeeSatoshi, p.PoolSatoshi*p.MaxFeeBps/10000)
 	fmt.Fprintf(&b, "unit step u %d, K %d, extra units m %d, max outputs %d\n", r.UnitStepSatoshi, r.UnitCount, r.ExtraUnits, r.MaxOutputs)
 	fmt.Fprintf(&b, "miner fee %d, T %d, one unit = T/K = %d (rounded down), residual %d -> %s\n", r.MinerFeeSatoshi, r.DistributableSatoshi, r.UnitSatoshi, r.ResidualSatoshi, r.ResidualAddress)
 	// The sampling line, rebuilt from the public inputs so the reader can

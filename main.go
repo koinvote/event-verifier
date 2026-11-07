@@ -91,7 +91,7 @@ type headerRow struct {
 	unitFloorSatoshi            int64
 	minUnits                    int64
 	outputCap                   int64
-	feeBudgetPercentage         int64
+	feeBudgetPercentage         float64
 	seedBlockMedianFeeRateSatVb int64
 	ladderRateSource            string
 	unitStepSatoshi             int64
@@ -414,7 +414,7 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 					h.unitFloorSatoshi = mustInt64(cols.require(record, "header", "unit_floor_satoshi"), "unit_floor_satoshi")
 					h.minUnits = mustInt64(cols.require(record, "header", "min_units"), "min_units")
 					h.outputCap = mustInt64(cols.require(record, "header", "output_cap"), "output_cap")
-					h.feeBudgetPercentage = mustInt64(cols.require(record, "header", "fee_budget_percentage"), "fee_budget_percentage")
+					h.feeBudgetPercentage = mustFloat(cols.require(record, "header", "fee_budget_percentage"), "fee_budget_percentage")
 					h.seedBlockMedianFeeRateSatVb = mustInt64(cols.require(record, "header", "seed_block_median_fee_rate_sat_vb"), "seed_block_median_fee_rate_sat_vb")
 					h.ladderRateSource = cols.require(record, "header", "ladder_rate_source")
 					h.unitStepSatoshi = mustInt64(cols.require(record, "header", "unit_step_satoshi"), "unit_step_satoshi")
@@ -844,9 +844,11 @@ func unitsContextFrom(parsed *parsedCSV) service.UnitsContext {
 			UnitFloorSatoshi:            h.unitFloorSatoshi,
 			MinUnits:                    h.minUnits,
 			OutputCap:                   h.outputCap,
-			FeeBudgetPercent:            h.feeBudgetPercentage,
-			MaxFeePercent:               int64(math.Round(h.maxFeePercentage)),
-			WaivedMaxFeePercent:         int64(math.Round(h.waivedMaxFeePercentage)),
+			// The report states percentages with up to two decimals; the
+			// allocation takes basis points, so 7.5 becomes 750 exactly.
+			FeeBudgetBps:                int64(math.Round(h.feeBudgetPercentage * 100)),
+			MaxFeeBps:                   int64(math.Round(h.maxFeePercentage * 100)),
+			WaivedMaxFeeBps:             int64(math.Round(h.waivedMaxFeePercentage * 100)),
 			TxOverheadVBytes:            int64(h.txOverheadVBytes),
 			InputVBytes:                 int64(h.inputP2WSHBytes),
 			OutputVBytes:                int64(h.outputDefaultVBytes),

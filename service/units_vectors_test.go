@@ -58,9 +58,9 @@ type unitsVectorCase struct {
 	UnitFloorSatoshi            int64    `json:"unit_floor_satoshi"`
 	MinUnits                    int64    `json:"min_units"`
 	OutputCap                   int64    `json:"output_cap"`
-	FeeBudgetPercent            int64    `json:"fee_budget_percent"`
-	MaxFeePercent               int64    `json:"max_fee_percent"`
-	WaivedMaxFeePercent         int64    `json:"waived_max_fee_percent"`
+	FeeBudgetBps                int64    `json:"fee_budget_bps"`
+	MaxFeeBps                   int64    `json:"max_fee_bps"`
+	WaivedMaxFeeBps             int64    `json:"waived_max_fee_bps"`
 	TxOverheadVBytes            int64    `json:"tx_overhead_vbytes"`
 	InputVBytes                 int64    `json:"input_vbytes"`
 	OutputVBytes                int64    `json:"output_vbytes"`
@@ -85,9 +85,9 @@ func (c unitsVectorCase) context() UnitsContext {
 			UnitFloorSatoshi:            c.UnitFloorSatoshi,
 			MinUnits:                    c.MinUnits,
 			OutputCap:                   c.OutputCap,
-			FeeBudgetPercent:            c.FeeBudgetPercent,
-			MaxFeePercent:               c.MaxFeePercent,
-			WaivedMaxFeePercent:         c.WaivedMaxFeePercent,
+			FeeBudgetBps:                c.FeeBudgetBps,
+			MaxFeeBps:                   c.MaxFeeBps,
+			WaivedMaxFeeBps:             c.WaivedMaxFeeBps,
 			TxOverheadVBytes:            c.TxOverheadVBytes,
 			InputVBytes:                 c.InputVBytes,
 			OutputVBytes:                c.OutputVBytes,
@@ -111,7 +111,7 @@ func unitsVectorExpectedFrom(result *UnitsResult, err error) *unitsVectorExpecte
 		var dustErr *UnitsDustError
 		switch {
 		case errors.As(err, &feeErr):
-			return &unitsVectorExpected{Error: fmt.Sprintf("fee_over_cap:%d:%t", feeErr.LimitPercent, feeErr.Waived)}
+			return &unitsVectorExpected{Error: fmt.Sprintf("fee_over_cap_bps:%d:%t", feeErr.LimitBps, feeErr.Waived)}
 		case errors.As(err, &dustErr):
 			return &unitsVectorExpected{Error: "unit_below_dust"}
 		default:
@@ -151,7 +151,7 @@ func riskScanUnitsCases() []unitsVectorCase {
 		return unitsVectorCase{
 			Name: name, Seed: seed, Addresses: addrs, Scores: scores, PoolSatoshi: pool,
 			PlatformFeeBps: 1000, UnitFloorSatoshi: 600, MinUnits: 8, OutputCap: 2000,
-			FeeBudgetPercent: 5, MaxFeePercent: 10, WaivedMaxFeePercent: 25,
+			FeeBudgetBps: 500, MaxFeeBps: 1000, WaivedMaxFeeBps: 2500,
 			TxOverheadVBytes: 12, InputVBytes: 110, OutputVBytes: 34, OpReturnVBytes: 0,
 			SeedBlockMedianFeeRateSatVb: 1, FeeRateMilliSatPerVb: 1191,
 		}
