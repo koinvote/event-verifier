@@ -154,6 +154,38 @@ func TestVersion5ReportVerifies(t *testing.T) {
 	}
 }
 
+// exampleBackendV5Path is a schema 5 report written by the backend itself
+// (koinvote/backend internal/jobs/testdata/payout_report_golden_v5.csv, from
+// its golden test), with the transaction id and the payout block filled in
+// the way the broadcast and confirm jobs do. example-v5.csv is produced by
+// this repository's own generator and proves the arithmetic; this one proves
+// the column layout the backend actually emits is the one this tool reads.
+// When the backend regenerates its golden file, copy it here.
+const exampleBackendV5Path = "example-backend-v5.csv"
+
+func TestBackendWrittenVersion5ReportVerifies(t *testing.T) {
+	parsed, err := loadReport(exampleBackendV5Path)
+	if err != nil {
+		t.Fatalf("load: %v", err)
+	}
+	if parsed.header.schemaVersion != 5 || parsed.header.distributionAlgorithm != service.UnitsAlgorithmID {
+		t.Fatalf("schema %d algorithm %q", parsed.header.schemaVersion, parsed.header.distributionAlgorithm)
+	}
+	if parsed.header.payoutBlockMTP == 0 || parsed.header.seedBlockMTP == 0 {
+		t.Fatal("the backend's report carries both block times; the fixture has lost one")
+	}
+	issues, err := verifyReport(parsed)
+	if err != nil {
+		t.Fatalf("verify: %v", err)
+	}
+	for _, issue := range issues {
+		t.Errorf("unexpected mismatch against the backend's report: %s", issue)
+	}
+	if len(parsed.winners) != len(parsed.balances) {
+		t.Fatalf("a units_v2 report lists every participant: %d rows for %d balances", len(parsed.winners), len(parsed.balances))
+	}
+}
+
 // loadTamperedV5 is loadTampered over the version 5 fixture.
 func loadTamperedV5(t *testing.T, edit func(string) (string, bool)) (*parsedCSV, error) {
 	t.Helper()
