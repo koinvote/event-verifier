@@ -206,9 +206,9 @@ const maxReportBytes = 64 << 20
 // toolVersion tracks the newest report format this build reads, which is the
 // only question --version is asked to settle: someone holding a report and a
 // binary needs to know whether the one can check the other. It moves with
-// maxSupportedSchemaVersion above, so 4.0.0 reads version 4 and everything
+// maxSupportedSchemaVersion above, so 5.0.0 reads version 5 and everything
 // before it.
-const toolVersion = "4.0.0"
+const toolVersion = "5.0.0"
 
 func main() {
 	reportPath := flag.String("report", "", "path to payout verification CSV")

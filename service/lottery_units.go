@@ -248,6 +248,14 @@ func (e *UnitsDustError) Error() string {
 		e.UnitSatoshi, e.DistributableSatoshi, e.UnitCount, UnitsDustLimitSatoshi)
 }
 
+// Sanity bounds on two public inputs, far above anything the platform
+// would set but well inside what the integer arithmetic tolerates: the
+// ladder doubles from the floor, and a cap is a transaction output count.
+const (
+	unitsMaxFloorSatoshi int64 = 1_000_000_000_000 // 10,000 BTC
+	unitsMaxOutputCap    int64 = 1_000_000
+)
+
 // ErrUnitsNoParticipants is returned when no address has a positive score.
 var ErrUnitsNoParticipants = errors.New("no participants")
 
@@ -483,10 +491,14 @@ func validateUnitsInputs(p UnitsPublicInputs, rep UnitsPlatformReported) error {
 		return errors.New("platform fee must be within [0, 10000) bps")
 	case p.UnitFloorSatoshi < UnitsDustLimitSatoshi:
 		return fmt.Errorf("unit floor must be at least %d sats", UnitsDustLimitSatoshi)
+	case p.UnitFloorSatoshi > unitsMaxFloorSatoshi:
+		return fmt.Errorf("unit floor must be at most %d sats", unitsMaxFloorSatoshi)
 	case p.MinUnits < 1:
 		return errors.New("min units must be >= 1")
 	case p.OutputCap < p.MinUnits:
 		return errors.New("output cap must be >= min units")
+	case p.OutputCap > unitsMaxOutputCap:
+		return fmt.Errorf("output cap must be at most %d", unitsMaxOutputCap)
 	case p.FeeBudgetPercent < 0:
 		return errors.New("fee budget must be >= 0")
 	case p.MaxFeePercent <= 0 || p.MaxFeePercent > 100:

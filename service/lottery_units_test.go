@@ -334,15 +334,21 @@ func TestUnitsResidualNeverCreatesAnOutputOfItsOwn(t *testing.T) {
 }
 
 func TestUnitsResidualTieGoesToTheFirstAddress(t *testing.T) {
-	ctx := unitsTestContext(unitsSeed(3), 50_000, []BalanceEntry{
-		{Address: "bbb", Score: 5000}, {Address: "aaa", Score: 5000}, {Address: "ccc", Score: 10},
-	})
-	result := mustComputeUnits(t, ctx)
-	if result.ResidualSatoshi == 0 {
-		t.Skip("no residual with these inputs")
-	}
-	if result.ResidualAddress != "aaa" {
-		t.Fatalf("residual went to %s, expected the first of the tied top scores", result.ResidualAddress)
+	// Three tied top scores and two tiny holders: with 66 units over W =
+	// 27,005 every seed leaves a residual, and it must land on the first of
+	// the tied addresses in string order.
+	for i := 0; i < 20; i++ {
+		ctx := unitsTestContext(unitsSeed(i), 50_000, []BalanceEntry{
+			{Address: "m", Score: 9000}, {Address: "k", Score: 9000}, {Address: "z", Score: 9000},
+			{Address: "a", Score: 3}, {Address: "b", Score: 2},
+		})
+		result := mustComputeUnits(t, ctx)
+		if result.ResidualSatoshi == 0 {
+			t.Fatalf("seed %d: no residual; the inputs no longer exercise the tie rule", i)
+		}
+		if result.ResidualAddress != "k" {
+			t.Fatalf("seed %d: residual went to %s, expected k, the first of the tied top scores", i, result.ResidualAddress)
+		}
 	}
 }
 
@@ -493,6 +499,8 @@ func TestUnitsRejectsBadInputs(t *testing.T) {
 		"floor under dust":    func(c *UnitsContext) { c.Public.UnitFloorSatoshi = 500 },
 		"zero min units":      func(c *UnitsContext) { c.Public.MinUnits = 0 },
 		"cap under min units": func(c *UnitsContext) { c.Public.OutputCap = 7 },
+		"absurd floor":        func(c *UnitsContext) { c.Public.UnitFloorSatoshi = 1 << 50 },
+		"absurd cap":          func(c *UnitsContext) { c.Public.OutputCap = 10_000_000 },
 		"max fee 0":           func(c *UnitsContext) { c.Public.MaxFeePercent = 0 },
 		"waived cap below":    func(c *UnitsContext) { c.Public.WaivedMaxFeePercent = 5 },
 		"zero output vbytes":  func(c *UnitsContext) { c.Public.OutputVBytes = 0 },
