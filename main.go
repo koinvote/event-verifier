@@ -838,12 +838,12 @@ func unitsContextFrom(parsed *parsedCSV) service.UnitsContext {
 	h := parsed.header
 	return service.UnitsContext{
 		Public: service.UnitsPublicInputs{
-			Seed:                        h.seed,
-			PoolSatoshi:                 h.poolSatoshi,
-			PlatformFeeBps:              int64(math.Round(h.platformFeePercentage * 100)),
-			UnitFloorSatoshi:            h.unitFloorSatoshi,
-			MinUnits:                    h.minUnits,
-			OutputCap:                   h.outputCap,
+			Seed:             h.seed,
+			PoolSatoshi:      h.poolSatoshi,
+			PlatformFeeBps:   int64(math.Round(h.platformFeePercentage * 100)),
+			UnitFloorSatoshi: h.unitFloorSatoshi,
+			MinUnits:         h.minUnits,
+			OutputCap:        h.outputCap,
 			// The report states percentages with up to two decimals; the
 			// allocation takes basis points, so 7.5 becomes 750 exactly.
 			FeeBudgetBps:                int64(math.Round(h.feeBudgetPercentage * 100)),
