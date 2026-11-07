@@ -356,7 +356,7 @@ func TestUnitsLadderTable(t *testing.T) {
 	}{
 		{21, 1, 600},
 		{21, 2, 600},
-		{21, 5, 6000},
+		{21, 5, 4800},
 		{10, 2, 600},
 	}
 	for _, c := range cases {
@@ -373,8 +373,8 @@ func TestUnitsLadderSkipsRungsBelowTheFloor(t *testing.T) {
 	ctx := unitsTestContext(unitsSeed(1), 50_000, unitsAddresses(repeatScore(5, 100)))
 	ctx.Public.UnitFloorSatoshi = 2000
 	result := mustComputeUnits(t, ctx)
-	if result.UnitStepSatoshi != 3000 {
-		t.Fatalf("floor 2000 should land on the 3000 rung, got %d", result.UnitStepSatoshi)
+	if result.UnitStepSatoshi != 2400 {
+		t.Fatalf("floor 2000 should land on the 2400 rung, got %d", result.UnitStepSatoshi)
 	}
 }
 

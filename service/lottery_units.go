@@ -78,21 +78,16 @@ const (
 	UnitsOpReturnMinimal = "minimal"
 )
 
-// unitLadderSteps are the first rungs of the unit ladder. Past the last rung
-// every step doubles. The ladder is fixed so that a verifier can recompute
-// which rung the platform had to land on from public inputs alone.
-var unitLadderSteps = []int64{600, 3000, 6000, 15000, 30000}
+// unitLadderBase is the first rung of the unit ladder; every rung doubles the
+// one before (600, 1200, 2400, 4800, ...). The ladder is fixed so that a
+// verifier can recompute which rung the platform had to land on from public
+// inputs alone, and it is fine-grained so that the unit never jumps far past
+// what the fee budget requires.
+const unitLadderBase int64 = 600
 
 // UnitLadderStep returns rung i of the unit ladder.
 func UnitLadderStep(i int) int64 {
-	if i < len(unitLadderSteps) {
-		return unitLadderSteps[i]
-	}
-	step := unitLadderSteps[len(unitLadderSteps)-1]
-	for j := len(unitLadderSteps); j <= i; j++ {
-		step *= 2
-	}
-	return step
+	return unitLadderBase << uint(i)
 }
 
 // UnitsPublicInputs are the inputs a verifier reproduces the allocation from.

@@ -184,7 +184,7 @@ func riskScanUnitsCases() []unitsVectorCase {
 	}
 
 	// Ladder and policy edges.
-	c := mk("ladder: 21 addresses at 5 sat/vB -> 6000", "0000000000000000000000000000000f", equal(21, 1_000_000), 50_000)
+	c := mk("ladder: 21 addresses at 5 sat/vB -> 4800", "0000000000000000000000000000000f", equal(21, 1_000_000), 50_000)
 	c.SeedBlockMedianFeeRateSatVb = 5
 	cases = append(cases, c)
 
