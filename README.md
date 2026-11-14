@@ -1,6 +1,6 @@
 # Event Verifier
 
-Version: 5.0.0
+Version: 6.0.0
 
 This tool verifies that a payout report CSV matches the official payout calculation.
 It recomputes the allocation from the report's own inputs and compares every
@@ -10,14 +10,21 @@ lottery report it means replaying the draw and comparing the winners.
 
 ## Which reports this version reads
 
-The version number tracks the newest report format this build reads, so 5.0.0
-reads version 5 and **every earlier format**. Run `--version` to see what you
+The version number tracks the newest report format this build reads, so 6.0.0
+reads version 6 and **every earlier format**. Run `--version` to see what you
 have. A report from a newer format is refused rather than read with these
 rules; the failure says so, and the answer is to pull the current build.
 
-Five formats have been published, and the differences are in what can be
+Six formats have been published, and the differences are in what can be
 proven, not only in which columns are present:
 
+- **Version 6** — the version 5 allocation with the lottery's names gone from
+  the file: the header states `participant_count` (checked against the
+  balance rows) instead of `winner_count`, has no `dust_threshold_satoshi`
+  (the floor is `unit_floor_satoshi`), and each participant's row is
+  `result_participant` with one amount, `final_reward_satoshi`.
+  `example-v6.csv` is generated from the allocation; `example-backend-v6.csv`
+  is the backend's own output.
 - **Version 5** — proportional units. A report whose `distribution_algorithm`
   is `units_v2` pays every participating address its share of the holding
   score: the net pool is cut into `unit_count` units, the whole units of each
@@ -193,12 +200,14 @@ verify-event.exe --report <your-report-file.csv> --verbose
 
 ## Checking it against a report you trust
 
-One sample report per format is included, plus a second version-5 file the
-backend itself wrote — the test suite runs all seven, and so should you:
+One sample report per format is included, plus the version 5 and 6 files the
+backend itself wrote — the test suite runs all nine, and so should you:
 
 ```
-./verify-event --report example-v5.csv       # current: proportional units
-./verify-event --report example-backend-v5.csv  # version 5 as the backend writes it
+./verify-event --report example-v6.csv       # current: proportional units
+./verify-event --report example-backend-v6.csv  # version 6 as the backend writes it
+./verify-event --report example-v5.csv       # proportional units, lottery column names
+./verify-event --report example-backend-v5.csv  # version 5 as the backend wrote it
 ./verify-event --report example-v4.csv       # fee includes the OP_RETURN summary
 ./verify-event --report example-v3.csv       # split score and seed blocks
 ./verify-event --report example-v2.csv       # fee rate from the node's estimator
@@ -206,7 +215,7 @@ backend itself wrote — the test suite runs all seven, and so should you:
 ./verify-event --report example-legacy.csv   # version 1, pre-BTC-Time balance snapshot
 ```
 
-All seven should pass. The older five are the point of the exercise: a tool
+All nine should pass. The older seven are the point of the exercise: a tool
 that can only check the most recent payout is not much of a check.
 
 If any of them fails, the build is wrong — stop and report it, rather than

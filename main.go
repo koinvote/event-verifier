@@ -39,7 +39,14 @@ import (
 // the header carries the unit ladder inputs, the seed block's median fee
 // rate, the waiver flag and the block times a waived payout is held to. An
 // older build would replay the lottery over a report that never ran one.
-const maxSupportedSchemaVersion = 5
+//
+// Version 6 keeps the version 5 allocation and renames what the lottery had
+// named: the header states participant_count (checked against the balance
+// rows) instead of winner_count, drops dust_threshold_satoshi (the floor is
+// unit_floor_satoshi), and each participant's row is result_participant with
+// one amount. A version 5 build would refuse the file for its unknown row
+// kind, which is the right answer: it does not know the names.
+const maxSupportedSchemaVersion = 6
 
 type headerRow struct {
 	// schemaVersion is absent in every report written before the fee model
@@ -70,11 +77,14 @@ type headerRow struct {
 	winnerCount           int
 	platformFeePercentage float64
 	dustThresholdSatoshi  int64
-	payoutFeeMultiplier   float64
-	feeRateSatVb          int64
-	txOverheadVBytes      int
-	inputP2WSHBytes       int
-	outputDefaultVBytes   int
+	// participantCount replaces winnerCount from version 6: how many
+	// addresses took part, which must equal the number of balance rows.
+	participantCount    int
+	payoutFeeMultiplier float64
+	feeRateSatVb        int64
+	txOverheadVBytes    int
+	inputP2WSHBytes     int
+	outputDefaultVBytes int
 	// opReturnVBytes is the space the event summary takes in the payout
 	// transaction, from version 4. Zero before that.
 	opReturnVBytes int
@@ -207,9 +217,9 @@ const maxReportBytes = 64 << 20
 // toolVersion tracks the newest report format this build reads, which is the
 // only question --version is asked to settle: someone holding a report and a
 // binary needs to know whether the one can check the other. It moves with
-// maxSupportedSchemaVersion above, so 5.0.0 reads version 5 and everything
+// maxSupportedSchemaVersion above, so 6.0.0 reads version 6 and everything
 // before it.
-const toolVersion = "5.0.0"
+const toolVersion = "6.0.0"
 
 func main() {
 	reportPath := flag.String("report", "", "path to payout verification CSV")
@@ -365,21 +375,29 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 			if raw, ok := cols.lookup(record, "seed_block_height"); ok && raw != "" {
 				parsed.header.seedBlockHeight = mustInt64(raw, "seed_block_height")
 			}
-			parsed.header.poolSatoshi = mustInt64(cols.require(record, "header", "pool_satoshi"), "pool_satoshi")
-			parsed.header.winnerCount = mustInt(cols.require(record, "header", "winner_count"), "winner_count")
-			parsed.header.platformFeePercentage = mustFloat(cols.require(record, "header", "platform_fee_percentage"), "platform_fee_percentage")
-			parsed.header.dustThresholdSatoshi = mustInt64(cols.require(record, "header", "dust_threshold_satoshi"), "dust_threshold_satoshi")
-			// From schema 2 the header states the rate outright and drops the
-			// multiplier it used to be derived from. Both shapes are read here
-			// so one build verifies old and new reports alike.
 			if raw, ok := cols.lookup(record, "schema_version"); ok && raw != "" {
 				parsed.header.schemaVersion = mustInt(raw, "schema_version")
 			} else {
 				parsed.header.schemaVersion = 1
 			}
+			parsed.header.poolSatoshi = mustInt64(cols.require(record, "header", "pool_satoshi"), "pool_satoshi")
+			parsed.header.platformFeePercentage = mustFloat(cols.require(record, "header", "platform_fee_percentage"), "platform_fee_percentage")
+			// Up to version 5 the header carries the lottery's winner_count and
+			// dust_threshold_satoshi (a units_v2 report filled them with 0 and
+			// the unit floor). Version 6 states participant_count instead and
+			// has neither of the old two.
+			if parsed.header.schemaVersion >= 6 {
+				parsed.header.participantCount = mustInt(cols.require(record, "header", "participant_count"), "participant_count")
+			} else {
+				parsed.header.winnerCount = mustInt(cols.require(record, "header", "winner_count"), "winner_count")
+				parsed.header.dustThresholdSatoshi = mustInt64(cols.require(record, "header", "dust_threshold_satoshi"), "dust_threshold_satoshi")
+			}
 			parsed.header.eventID, _ = cols.lookup(record, "event_id")
 			parsed.header.payoutTxID, _ = cols.lookup(record, "payout_txid")
 
+			// From schema 2 the header states the rate outright and drops the
+			// multiplier it used to be derived from. Both shapes are read here
+			// so one build verifies old and new reports alike.
 			if parsed.header.schemaVersion >= 2 {
 				parsed.header.feeRateDecimal = mustFloat(cols.require(record, "header", "fee_rate_sat_vb"), "fee_rate_sat_vb")
 				parsed.header.feeRateSource, _ = cols.lookup(record, "fee_rate_source")
@@ -466,6 +484,21 @@ func loadReport(path string) (parsed *parsedCSV, err error) {
 				winner.unitsExtra = mustInt64(cols.require(record, "result_winner", "units_extra"), "units_extra")
 			}
 			parsed.winners = append(parsed.winners, winner)
+		case "result_participant":
+			// Version 6 name for the units_v2 row: every participant, paid or
+			// not. units_v2 has no original/final split and no dust, so the row
+			// carries one amount; the two legacy fields are set from it so the
+			// comparison below reads both shapes alike.
+			final := mustInt64(cols.require(record, "result_participant", "final_reward_satoshi"), "final_reward_satoshi")
+			parsed.winners = append(parsed.winners, resultWinner{
+				address:               cols.require(record, "result_participant", "address"),
+				weight:                mustInt64(cols.require(record, "result_participant", "holding_score_sat_blocks"), "holding_score_sat_blocks"),
+				originalRewardSatoshi: final,
+				finalRewardSatoshi:    final,
+				entitlementSatoshi:    mustInt64(cols.require(record, "result_participant", "entitlement_satoshi"), "entitlement_satoshi"),
+				unitsGuaranteed:       mustInt64(cols.require(record, "result_participant", "units_guaranteed"), "units_guaranteed"),
+				unitsExtra:            mustInt64(cols.require(record, "result_participant", "units_extra"), "units_extra"),
+			})
 
 		default:
 			// Anything appended to a valid report used to land here and be
@@ -968,6 +1001,9 @@ func compareUnitsResults(parsed *parsedCSV, result *service.UnitsResult) []strin
 	}
 	if len(parsed.winners) != len(computed) {
 		issues = append(issues, fmt.Sprintf("participant row count mismatch: report=%d computed=%d", len(parsed.winners), len(computed)))
+	}
+	if h.schemaVersion >= 6 && h.participantCount != len(parsed.balances) {
+		issues = append(issues, fmt.Sprintf("participant_count mismatch: header=%d balance rows=%d", h.participantCount, len(parsed.balances)))
 	}
 	for _, winner := range parsed.winners {
 		row, ok := computed[winner.address]
