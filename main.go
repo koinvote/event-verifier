@@ -160,9 +160,10 @@ type resultSummary struct {
 
 type resultWinner struct {
 	address string
-	// weight is the lottery weight the report claims for this address. Under
-	// BTC-Time scoring it is holding_score_sat_blocks; in reports predating it,
-	// balance_satoshi. The two are different units but play the same role, and
+	// weight is the score the report claims for this address: the lottery
+	// weight of a lottery_v1 report, the proportional share of a units_v2 one.
+	// Under BTC-Time scoring it is holding_score_sat_blocks; in reports
+	// predating it, balance_satoshi. The two are different units but play the same role, and
 	// the arithmetic below never mixes them: both sides of every comparison
 	// come from the same report.
 	weight                int64
@@ -258,8 +259,13 @@ func main() {
 	}
 
 	if len(issues) == 0 {
-		fmt.Printf("%s The lottery result matches the report.\n",
-			colourise("Verification passed.", ansiBoldGreen))
+		// A units_v2 report has no draw of winners to replay; what was checked is
+		// each address's units and payout.
+		verdict := "The lottery result matches the report."
+		if parsed.header.distributionAlgorithm == service.UnitsAlgorithmID {
+			verdict = "The payout allocation matches the report."
+		}
+		fmt.Printf("%s %s\n", colourise("Verification passed.", ansiBoldGreen), verdict)
 		printRemainingChecks(parsed)
 		return
 	}
@@ -770,9 +776,10 @@ func newParseError(label string, raw string) error {
 // Everything in the file is the report's own claim; that is what a verifier is
 // for. What earns a line is being the reader's cheapest way to test one, and
 // these two are minutes of work against a claim that would otherwise rest on
-// trust: a seed that was chosen rather than taken from a block picks the
-// winners outright, and a file that is not the published one makes the rest of
-// this output describe some other document.
+// trust: a seed that was chosen rather than taken from a block decides who
+// gets the remainder units (or, in a lottery report, picks the winners
+// outright), and a file that is not the published one makes the rest of this
+// output describe some other document.
 func printRemainingChecks(parsed *parsedCSV) {
 	h := parsed.header
 
@@ -974,7 +981,7 @@ func compareUnitsResults(parsed *parsedCSV, result *service.UnitsResult) []strin
 		check("units_extra for "+winner.address, winner.unitsExtra, row.UnitsExtra)
 		check("final_reward_satoshi for "+winner.address, winner.finalRewardSatoshi, row.FinalRewardSatoshi)
 		if winner.originalRewardSatoshi != winner.finalRewardSatoshi || winner.isDust {
-			issues = append(issues, fmt.Sprintf("%s: units_v2 pays no dust and has no redistribution, but the row says original=%d final=%d is_dust=%t",
+			issues = append(issues, fmt.Sprintf("%s: a units_v2 row must have original = final and is_dust = false, but the row says original=%d final=%d is_dust=%t",
 				winner.address, winner.originalRewardSatoshi, winner.finalRewardSatoshi, winner.isDust))
 		}
 	}

@@ -2,9 +2,11 @@
 
 Version: 5.0.0
 
-This tool verifies that a payout report CSV matches the official lottery calculation.
-It recomputes the draw from the report's own inputs and compares every winner,
-reward and fee against what the report claims.
+This tool verifies that a payout report CSV matches the official payout calculation.
+It recomputes the allocation from the report's own inputs and compares every
+paid address, amount and fee against what the report claims. For a current
+(`units_v2`) report that means each address's units and payout; for an older
+lottery report it means replaying the draw and comparing the winners.
 
 ## Which reports this version reads
 
@@ -16,7 +18,7 @@ rules; the failure says so, and the answer is to pull the current build.
 Five formats have been published, and the differences are in what can be
 proven, not only in which columns are present:
 
-- **Version 5** — the draw is gone. A report whose `distribution_algorithm`
+- **Version 5** — proportional units. A report whose `distribution_algorithm`
   is `units_v2` pays every participating address its share of the holding
   score: the net pool is cut into `unit_count` units, the whole units of each
   address's share are paid outright (`units_guaranteed`), and the fractions
@@ -30,8 +32,13 @@ proven, not only in which columns are present:
   in satoshi; it is held to the floor and to the fee cap, and when the cap is
   waived after a 72-hour wait (`fee_cap_waived`), the wait is checked against
   the seed block's and payout block's times. Every participant has a
-  `result_winner` row. `example-v5.csv` is generated from the allocation
-  itself, and its seed matters: substitute it and the report fails.
+  `result_winner` row (the row name is kept from the earlier formats; under
+  `units_v2` it means a participant, paid or not). Two header columns keep
+  their old names for the same reason: `winner_count` is always `0` in a
+  `units_v2` report (the API's `winner_count` is the number of paid
+  addresses), and `dust_threshold_satoshi` holds the payout unit floor.
+  `example-v5.csv` is generated from the allocation itself, and its seed
+  matters: substitute it and the report fails.
 - **Version 4** — the payout transaction carries a short public summary of
   the event in an OP_RETURN output, and `op_return_vbytes` states how much
   space it takes. That space is part of the miner fee, so it is part of the
@@ -105,14 +112,16 @@ To see which report formats your build reads, without giving it a report:
 ## Output
 
 - Success:
-  - `Verification passed. The lottery result matches the report.`
-  - two lines naming what is left for you to check
+  - `Verification passed. The payout allocation matches the report.` (a
+    `units_v2` report) or `Verification passed. The lottery result matches
+    the report.` (an older lottery report)
+  - two or three lines naming what is left for you to check
 - Failure:
   - `Verification failed. Possible causes: report file is incorrect or incomplete; tool version mismatch; input parameters are incorrect.`
 
 ### 🚨 「通過」是什麼意思，以及還有兩件事要你自己做
 
-通過代表**用報告列出的積分與種子重算，中獎者與金額跟報告寫的一樣**。
+通過代表**用報告列出的積分與種子重算，每個地址的份數與金額跟報告寫的一樣**（舊版抽籤報告則是中獎者與金額一樣）。
 
 報告裡的每一個數字都是報告自己說的——一支驗證工具本來就是拿來檢驗這些說法的。
 它會多印兩行，因為那兩件事**它做不到、而你花幾分鐘就做得到**：
@@ -123,7 +132,7 @@ To see which report formats your build reads, without giving it a report:
 ```
 
 **種子**——去區塊瀏覽器查那個高度，比對雜湊。
-種子若不是取自區塊而是被挑出來的，中獎者等於直接被指定，上面算得再對都沒有意義。
+種子若不是取自區塊而是被挑出來的，零頭補足給誰就等於直接被指定（舊版抽籤報告則是中獎者被指定），上面算得再對都沒有意義。
 
 **檔案**——活動頁面的「驗證包」區塊、CSV 下載鍵旁邊就寫著官方的 SHA-256
 （API 也在 `X-CSV-SHA256` 這個 header 回同一個值）。不同就代表你手上這份不是官方那份，
@@ -134,7 +143,7 @@ To see which report formats your build reads, without giving it a report:
 
 ### 工具自己檢查的兩個結算區塊
 
-新版報告有兩個高度：`score_block_height`（誰的餘額算數）與 `seed_block_height`（誰中獎）。
+新版報告有兩個高度：`score_block_height`（誰的餘額算數）與 `seed_block_height`（零頭補足的種子；舊版抽籤報告則是誰中獎）。
 **兩者必須相差 6 個區塊**，工具會驗這件事。
 
 這不是形式規定：權重在種子區塊出現的六格之前就定案了，所以挖出種子區塊的礦工
@@ -144,12 +153,14 @@ To see which report formats your build reads, without giving it a report:
 
 ### 想確認它真的在重算、不只是在比對檔案？
 
-改一個數字再跑一次。把某個參與者的 `holding_score_sat_blocks` 改大，工具會說：
+改一個數字再跑一次。把某個參與者的 `holding_score_sat_blocks` 改大，工具會說（新版 `units_v2` 報告）：
 
 ```
-- lottery weight mismatch for bc1qbbb: report=100800000000 computed=999900000000
-- original_reward_satoshi mismatch for bc1qbbb: report=17821717 computed=63907475
+- holding score for bc1qbbb mismatch: report=100800000000 computed=999900000000
+- entitlement_satoshi for bc1qbbb mismatch: report=17821717 computed=63907475
 ```
+
+舊版抽籤報告則印 `lottery weight mismatch for …` 與 `original_reward_satoshi mismatch for …`。
 
 它報告的是「用你給的輸入重算出來是這個，跟報告寫的不一樣」——一個只做檔案指紋比對的
 工具說不出這種話。
@@ -182,11 +193,12 @@ verify-event.exe --report <your-report-file.csv> --verbose
 
 ## Checking it against a report you trust
 
-One sample report per format is included — the test suite runs all six, and
-so should you:
+One sample report per format is included, plus a second version-5 file the
+backend itself wrote — the test suite runs all seven, and so should you:
 
 ```
-./verify-event --report example-v5.csv       # current: proportional units, no draw
+./verify-event --report example-v5.csv       # current: proportional units
+./verify-event --report example-backend-v5.csv  # version 5 as the backend writes it
 ./verify-event --report example-v4.csv       # fee includes the OP_RETURN summary
 ./verify-event --report example-v3.csv       # split score and seed blocks
 ./verify-event --report example-v2.csv       # fee rate from the node's estimator
@@ -194,7 +206,7 @@ so should you:
 ./verify-event --report example-legacy.csv   # version 1, pre-BTC-Time balance snapshot
 ```
 
-All six should pass. The older five are the point of the exercise: a tool
+All seven should pass. The older five are the point of the exercise: a tool
 that can only check the most recent payout is not much of a check.
 
 If any of them fails, the build is wrong — stop and report it, rather than
