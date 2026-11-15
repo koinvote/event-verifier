@@ -786,7 +786,7 @@
       70,
       500
     ],
-    "pool_satoshi": 40000,
+    "pool_satoshi": 50000,
     "platform_fee_bps": 1000,
     "unit_floor_satoshi": 600,
     "min_units": 8,
@@ -802,12 +802,12 @@
     "fee_rate_milli_sat_per_vb": 1191,
     "fee_cap_waived": false,
     "expected": {
-      "platform_fee_satoshi": 4000,
+      "platform_fee_satoshi": 5000,
       "miner_fee_satoshi": 348,
-      "distributable_satoshi": 35652,
+      "distributable_satoshi": 44652,
       "unit_step_satoshi": 600,
-      "unit_satoshi": 672,
-      "unit_count": 53,
+      "unit_satoshi": 676,
+      "unit_count": 66,
       "extra_units": 2,
       "max_outputs": 4,
       "total_score": "3570",
@@ -818,34 +818,34 @@
         {
           "address": "bc1q0000",
           "score": 2000,
-          "entitlement_satoshi": 19973,
-          "units_guaranteed": 29,
-          "units_extra": 0,
-          "final_reward_satoshi": 19509
+          "entitlement_satoshi": 25015,
+          "units_guaranteed": 36,
+          "units_extra": 1,
+          "final_reward_satoshi": 25034
         },
         {
           "address": "bc1q0001",
           "score": 1000,
-          "entitlement_satoshi": 9986,
-          "units_guaranteed": 14,
-          "units_extra": 1,
-          "final_reward_satoshi": 10090
+          "entitlement_satoshi": 12507,
+          "units_guaranteed": 18,
+          "units_extra": 0,
+          "final_reward_satoshi": 12177
         },
         {
           "address": "bc1q0002",
           "score": 70,
-          "entitlement_satoshi": 699,
+          "entitlement_satoshi": 875,
           "units_guaranteed": 1,
           "units_extra": 0,
-          "final_reward_satoshi": 672
+          "final_reward_satoshi": 676
         },
         {
           "address": "bc1q0003",
           "score": 500,
-          "entitlement_satoshi": 4993,
-          "units_guaranteed": 7,
+          "entitlement_satoshi": 6253,
+          "units_guaranteed": 9,
           "units_extra": 1,
-          "final_reward_satoshi": 5381
+          "final_reward_satoshi": 6765
         }
       ]
     }
